@@ -21,8 +21,9 @@ CHANNELS = {
         # The channel id is then available in your URL
         'channel_id': 'UCcJgOeune0II4a_qi9OMkRA',
 
-        # (Optional) If you want this series to end up in another dir under SERIES_DIR.
-        'dir': '/gaming',
+        # (Optional) If you want this series folder to end up in another dir under SERIES_DIR.
+        # Equals to <<dir>> in SERIES_DIR/<<dir>>/CHANNEL_NAME/Season 01/TITLE - s01e01.mp4
+        'dir': '/gaming', # In this the videos will be under "/mnt/lvm/series/gaming/Friendly Channel Name/Season 01/title - s01e01.mp4
 
         # (Optional) If you want to set another speed than SPEED_UP_DEFAULT
         'speed': 2.0,

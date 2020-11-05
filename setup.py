@@ -32,7 +32,8 @@ setup(
     ],
 
     install_requires=[
-        "requests"
+        "requests",
+        "sqlite3"
     ],
 
     classifiers=[

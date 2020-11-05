@@ -1,4 +1,4 @@
-from os import path, system
+from os import path
 from typing import Pattern
 import sys
 import site
@@ -18,13 +18,13 @@ elif path.exists(_user_config_file):
     _config_file = _user_config_file
 # User hasn't configured the program yet
 else:
-    sys_config_example = path.join(sys.prefix, _example_file)
-    user_config_example = path.join(site.getuserbase(), _example_file)
-    if path.exists(sys_config_example):
-        config_example_file = sys_config_example
+    _sys_config_example = path.join(sys.prefix, _example_file)
+    _user_config_example = path.join(site.getuserbase(), _example_file)
+    if path.exists(_sys_config_example):
+        _config_example_file = _sys_config_example
         _config_file = path.join(sys.prefix, _config_file)
-    elif path.exists(user_config_example):
-        config_example_file = user_config_example
+    elif path.exists(_user_config_example):
+        _config_example_file = _user_config_example
         _config_file = path.join(site.getuserbase(), _config_file)
     # Couldn't find the example file
     else:
@@ -54,6 +54,20 @@ class Config:
         self._set_default_values()
         self._get_optional_variables()
         self._check_required_variables()
+
+    def add_args_settings(self, args):
+        """Set additional configuration from script arguments
+
+        Args:
+            args (list): All the parsed arguments
+        """
+        self.verbose = args.verbose
+        self.pretend = args.pretend
+        self.daemon = args.daemon
+
+        if args.threads is not None:
+            self.threads = args.threads
+
 
     def _set_default_values(self):
         """Set default values for variables
@@ -158,5 +172,5 @@ class Config:
                 ))
                 sys.exit(1)
 
-
+global config
 config = Config(_user_config)

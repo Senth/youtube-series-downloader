@@ -1,20 +1,13 @@
-import io
-import os
-import re
-
 from setuptools import find_packages
 from setuptools import setup
 
 
-def read(filename):
-    filename = os.path.join(os.path.dirname(__file__), filename)
-    text_type = type(u"")
-    with io.open(filename, mode="r", encoding='utf-8') as fd:
-        return re.sub(text_type(r':[a-z]+:`~?(.*?)`'), text_type(r'``\1``'), fd.read())
+with open('README.md', 'r') as fh:
+    long_description = fh.read()
 
 
 setup(
-    name="youtube-series-downloader",
+    name="youtube_series_downloader",
     version="0.1.0",
     url="https://github.com/Senth/youtube-series-downloader",
     license='MIT',
@@ -23,22 +16,29 @@ setup(
     author_email="senth.wallace@gmail.com",
 
     description="Downloads YouTube series and optionally speeds them up to be watched on TVs",
-    long_description=read("README.rst"),
+    long_description=long_description,
+    long_description_content_type='text/markdown',
 
-    packages=find_packages(exclude=('tests',)),
+    packages=find_packages(exclude=('tests','config')),
+    entry_points={
+        'console_scripts':[
+            'youtube_series_downloader=youtube_series_downloader.__main__:__main__',
+        ],
+    },
 
-    install_requires=[],
+    include_package_data=True,
+    data_files=[
+        ('config/youtube-series-downloader', ['config/config.example.py']),
+    ],
+
+    install_requires=[
+        "requests"
+    ],
 
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
     ],
+    python_requires='>=3.8',
 )

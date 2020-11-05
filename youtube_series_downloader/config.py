@@ -64,6 +64,7 @@ class Config:
         self.verbose = args.verbose
         self.pretend = args.pretend
         self.daemon = args.daemon
+        self.max_days_back = args.max_days_back
 
         if args.threads is not None:
             self.threads = args.threads
@@ -97,7 +98,7 @@ class Config:
             _print_missing('SERIES_DIR')
 
         try:
-            self._channels = _user_config.CHANNELS
+            self.channels = _user_config.CHANNELS
         except AttributeError:
             _print_missing('CHANNELS')
 
@@ -139,8 +140,8 @@ class Config:
                 sys.exit(1)
 
             # Include & Exclude (optional)
-            Config._check_regex(name, 'include', info)
-            Config._check_regex(name, 'exclude', info)
+            Config._check_regex(name, 'includes', info)
+            Config._check_regex(name, 'excludes', info)
 
     @staticmethod
     def _check_regex(channel_name: str, list_name: str, info: dict):
@@ -148,7 +149,7 @@ class Config:
 
         Args:
             channel_name (str): The channel name
-            list_name (str): Should be include or exclude
+            list_name (str): Should be includes or excludes
             info (dict): Channel information
         """
         if list_name in info:

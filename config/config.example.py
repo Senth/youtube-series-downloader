@@ -29,13 +29,13 @@ CHANNELS = {
 
         # (Optional) Include patterns in regex format
         # If the include pattern is set, only titles that match one of these patterns will be downloaded
-        'include': [
+        'includes': [
             r'tutorial' # Example, only download videos that contain the word 'tutorial'
         ],
 
         # (Optional) Exclude patterns in regex format. Can't be used together with 'include'.
         # If the exclude pattern is set, titles that match any of the exclude patterns won't be downloaded
-        'exclude': [
+        'excludes': [
             r'wordpress' # Example, download all videos except those that have the title 'wordpress'
         ],
     },

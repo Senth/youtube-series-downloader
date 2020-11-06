@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="youtube-series-downloader",
-    version="1.0.0",
+    version="1.1.0",
     url="https://github.com/Senth/youtube-series-downloader",
     license="MIT",
     author="Matteus Magnusson",
@@ -16,7 +16,7 @@ setup(
     description="Downloads YouTube series and optionally speeds them up to be watched on TVs",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=find_packages(exclude=("tests", "config")),
+    packages=["youtube_series_downloader"],
     entry_points={
         "console_scripts": [
             "youtube-series-downloader=youtube_series_downloader.__main__:__main__",

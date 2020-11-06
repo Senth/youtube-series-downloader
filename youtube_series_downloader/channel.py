@@ -1,3 +1,4 @@
+from __future__ import annotations
 from .logger import log_message
 from .video import Video
 from .config import config
@@ -6,7 +7,6 @@ from typing import (
     Pattern,
 )
 from datetime import datetime
-from __future__ import annotations
 import re
 import requests
 

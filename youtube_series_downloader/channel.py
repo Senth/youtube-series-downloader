@@ -1,5 +1,5 @@
 from __future__ import annotations
-from .logger import log_message
+from .logger import LogColors, debug_message, log_message
 from .video import Video
 from .config import config
 from typing import (
@@ -74,9 +74,9 @@ class Channel:
         return channels
 
     def get_videos(self) -> List[Video]:
-        log_message("\n\n**********************************")
-        log_message(self.name.center(34))
-        log_message("**********************************")
+        log_message("\n\n**********************************", LogColors.header)
+        log_message(self.name.center(34), LogColors.header)
+        log_message("**********************************", LogColors.header)
 
         url = Channel._RSS_PREFIX + self.channel_id
         xml = requests.get(url).text
@@ -89,16 +89,18 @@ class Channel:
             id = groups[0]
             title = groups[1]
             date = groups[2]
-            log_message("{}: Checking video ({})".format(id, date))
+            debug_message(f"Checking video {id}, ({title}), date ({date})")
 
             if (
-                not self._matches_excludes(title)
+                self._is_new(date)
                 and self._matches_includes(title)
-                and self._is_new(date)
+                and not self._matches_excludes(title)
             ):
                 video = Video(id, date, title)
-                log_message("{}: Appending video: {}".format(id, title))
+                log_message(f"+++ {title}\n", LogColors.added)
                 videos.append(video)
+            else:
+                debug_message("")
 
         return videos
 
@@ -111,17 +113,19 @@ class Channel:
             diff_time = datetime.now() - date.replace(tzinfo=None)
 
             if diff_time.days <= config.max_days_back:
-                log_message("Is new by {} days".format(diff_time.days))
+                debug_message(f"    + New by {diff_time.days} days", LogColors.passed)
                 return True
             else:
-                log_message("is old by {} days".format(diff_time.days))
+                debug_message(f"    - Old by {diff_time.days} days", LogColors.skipped)
                 return False
 
     def _matches_excludes(self, title: str) -> bool:
         for filter in self.excludes:
             if re.search(filter, title):
-                log_message("--- ({}) Matched exclude: {}".format(title, filter))
+                debug_message(f"    - Exclude: {filter}", LogColors.skipped)
                 return True
+
+        debug_message("    + No matching excludes", LogColors.passed)
         return False
 
     def _matches_includes(self, title: str) -> bool:
@@ -130,6 +134,8 @@ class Channel:
 
         for filter in self.includes:
             if re.search(filter, title):
-                log_message("+++ ({}) Matched include: {}".format(title, filter))
+                debug_message(f"    + Include: {filter}", LogColors.passed)
                 return True
+
+        debug_message("    - No matching includes", LogColors.skipped)
         return False

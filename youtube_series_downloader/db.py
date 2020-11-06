@@ -4,12 +4,13 @@ import sqlite3
 from .logger import log_message
 from .config import config
 
+
 class Db:
-    _FILE_PATH = path.expanduser('~/.youtube-series.downloader.db')
+    _FILE_PATH = path.expanduser("~/.youtube-series.downloader.db")
     _FILE = Path(_FILE_PATH)
 
     def __init__(self):
-        log_message('Sqlite DB location: {}'.format(Db._FILE_PATH))
+        log_message("Sqlite DB location: {}".format(Db._FILE_PATH))
         self._connection = sqlite3.connect(Db._FILE_PATH)
         self._cursor = self._connection.cursor()
 
@@ -18,7 +19,8 @@ class Db:
 
     def _create_db(self):
         self._connection.execute(
-            'Create TABLE IF NOT EXISTS video (id TEXT, episode_number INTEGER, channel_name TEXT)')
+            "Create TABLE IF NOT EXISTS video (id TEXT, episode_number INTEGER, channel_name TEXT)"
+        )
         self._connection.commit()
 
     def add_downloaded(self, channel_name: str, video_id: str):
@@ -30,14 +32,15 @@ class Db:
         """
         episode_number = self.get_next_episode_number(channel_name)
 
-        log_message("Add channel {} video {} to downloaded with episode number {}.".format(
-            channel_name, video_id, episode_number
-        ))
+        log_message(
+            "Add channel {} video {} to downloaded with episode number {}.".format(
+                channel_name, video_id, episode_number
+            )
+        )
 
         if not config.pretend:
             sql = "INSERT INTO video (id, episode_number, channel_name) VALUES(?, ?, ?)"
-            self._connection.execute(
-                sql, (video_id, episode_number, channel_name))
+            self._connection.execute(sql, (video_id, episode_number, channel_name))
             self._connection.commit()
 
     def get_next_episode_number(self, channel_name: str) -> int:
@@ -70,6 +73,3 @@ class Db:
         self._cursor.execute(sql, [video_id])
         row = self._cursor.fetchone()
         return bool(row)
-
-
-

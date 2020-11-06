@@ -22,10 +22,10 @@ def __main__():
         logging.getLogger("apscheduler").setLevel(logging.ERROR)
 
     if config.daemon:
-        log_message("Starting {config.app_name} as a daemon")
+        log_message(f"Starting {config.app_name} as a daemon")
         _daemon()
     else:
-        log_message("Running {config.app_name} once")
+        log_message(f"Running {config.app_name} once")
         _run_once()
 
 
@@ -36,7 +36,7 @@ def _daemon():
         "interval",
         minutes=10,
         max_instances=1,
-        next_run_time=datetime.datetime(),
+        next_run_time=datetime.now(),
     )
     scheduler.start()
 

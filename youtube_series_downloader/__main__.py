@@ -25,7 +25,7 @@ def __main__():
 
 def _daemon():
     scheduler = BlockingScheduler()
-    scheduler.add_job(_run_once, "interval", minutes=10)
+    scheduler.add_job(_run_once, "interval", minutes=10, max_instances=1)
     scheduler.start()
 
 

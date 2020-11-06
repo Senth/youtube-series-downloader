@@ -63,6 +63,7 @@ class Config:
         self._get_optional_variables()
         self._check_required_variables()
         self._parse_args()
+        self.app_name = __package__.replace("_", "-")
 
     def _parse_args(self):
         # Get arguments first to get verbosity before we get everything else
@@ -94,6 +95,11 @@ class Config:
             type=int,
             help="How many days back we should check for videos",
         )
+        parser.add_argument(
+            "--debug",
+            action="store_true",
+            help="Turn on debug messages. This automatically turns on --verbose as well.",
+        )
 
         _args = parser.parse_args()
         self._add_args_settings(_args)
@@ -105,6 +111,7 @@ class Config:
             args (list): All the parsed arguments
         """
         self.verbose = args.verbose
+        self.debug = args.debug
         self.pretend = args.pretend
         self.daemon = args.daemon
 
@@ -113,6 +120,9 @@ class Config:
 
         if args.threads:
             self.threads = args.threads
+
+        if args.debug:
+            self.verbose = True
 
     def _set_default_values(self):
         """Set default values for variables"""

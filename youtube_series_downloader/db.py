@@ -6,7 +6,7 @@ from .config import config
 
 
 class Db:
-    _FILE_PATH = path.expanduser("~/.youtube-series.downloader.db")
+    _FILE_PATH = path.expanduser("~/.youtube-series-downloader.db")
     _FILE = Path(_FILE_PATH)
 
     def __init__(self):

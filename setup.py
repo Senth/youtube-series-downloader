@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 
 setup(
-    name="youtube_series_downloader",
+    name="youtube-series-downloader",
     version="0.1.0",
     url="https://github.com/Senth/youtube-series-downloader",
     license="MIT",
@@ -19,14 +19,14 @@ setup(
     packages=find_packages(exclude=("tests", "config")),
     entry_points={
         "console_scripts": [
-            "youtube_series_downloader=youtube_series_downloader.__main__:__main__",
+            "youtube-series-downloader=youtube_series_downloader.__main__:__main__",
         ],
     },
     include_package_data=True,
     data_files=[
-        ("config/youtube_series_downloader", ["config/config.example.py"]),
+        ("config/youtube-series-downloader", ["config/config.example.py"]),
     ],
-    install_requires=["requests"],
+    install_requires=["requests", "apscheduler", "youtube-dl"],
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "License :: OSI Approved :: MIT License",

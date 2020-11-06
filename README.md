@@ -1,6 +1,6 @@
-# youtube_series_downloader
+# youtube-series-downloader
 
-[![Latest PyPI version](https://img.shields.io/pypi/v/youtube_series_downloader.svg)](https://pypi.python.org/pypi/youtube_series_downloader)
+[![Latest PyPI version](https://img.shields.io/pypi/v/youtube-series-downloader.svg)](https://pypi.python.org/pypi/youtube-series-downloader)
 
 Downloads YouTube series and optionally speeds them up to be watched on TVs
 

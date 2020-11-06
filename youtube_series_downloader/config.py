@@ -4,7 +4,7 @@ import sys
 import site
 import importlib.util
 
-_config_dir = path.join("config", __package__)
+_config_dir = path.join("config", __package__.replace("_", "-"))
 _config_file = path.join(_config_dir, "config.py")
 _example_file = path.join(_config_dir, "config.example.py")
 

@@ -1,3 +1,4 @@
+import subprocess
 import sys
 from tempfile import gettempdir
 from .db import Db
@@ -17,8 +18,8 @@ class Downloader:
     def __init__(self, channel: Channel, video: Video):
         self._video = video
         self._channel = channel
-        self._tmp_download = path.join(gettempdir(), self._video.id + "_tmp.mkv")
-        self._tmp_converted = path.join(gettempdir(), self._video.id + "_tmp.mp4")
+        self._tmp_download = path.join(gettempdir(), self._video.id + ".mkv")
+        self._tmp_converted = path.join(gettempdir(), self._video.id + ".mp4")
 
     def has_downloaded(self) -> bool:
         """Check if this video has been downloaded
@@ -49,7 +50,8 @@ class Downloader:
                         "--restrict-filenames",
                         "--",
                         self._video.id,
-                    ]
+                    ],
+                    stdout=self._get_verbose_out(),
                 ).returncode
                 == 0
             )
@@ -95,7 +97,8 @@ class Downloader:
                         "-map",
                         "[a]",
                         self._tmp_converted,
-                    ]
+                    ],
+                    stdout=self._get_verbose_out(),
                 ).returncode
                 == 0
             )
@@ -115,6 +118,12 @@ class Downloader:
 
         if converted or config.pretend:
             Downloader._db.add_downloaded(self._channel.name, self._video.id)
+
+    def _get_verbose_out(self) -> int:
+        if config.verbose:
+            return subprocess.STDOUT
+        else:
+            return subprocess.DEVNULL
 
     def _get_out_dir(self) -> str:
         return path.join(

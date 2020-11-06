@@ -28,7 +28,6 @@ setup(
     ],
     install_requires=["requests", "apscheduler", "youtube-dl"],
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
     ],

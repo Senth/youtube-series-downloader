@@ -1,18 +1,35 @@
-import argparse
-from youtube_series_downloader.logger import log_message
-from youtube_series_downloader.downloader import Downloader
-from .channel import Channel
+from __future__ import annotations
+from apscheduler.schedulers.blocking import BlockingScheduler
+import logging
 from .config import config
+from .program_checker import check_for_programs
+from .logger import log_message
+from .downloader import Downloader
+from .channel import Channel
 
 
 def __main__():
-    pass
+    check_for_programs()
+
+    # Set logger for apscheduler depending on verbosity
+    if config.verbose:
+        logging.getLogger("apscheduler").setLevel(logging.WARNING)
+    else:
+        logging.getLogger("apscheduler").setLevel(logging.ERROR)
+
+    if config.daemon:
+        _daemon()
+    else:
+        _run_once()
 
 
-def _app():
-    args = _get_args()
-    config.add_args_settings(args)
+def _daemon():
+    scheduler = BlockingScheduler()
+    scheduler.add_job(_run_once, "interval", minutes=10)
+    scheduler.start()
 
+
+def _run_once():
     total_downloaded = 0
     channels = Channel.create_from_config()
     for channel in channels:
@@ -35,35 +52,5 @@ def _app():
     log_message("\n\n\nDownloaded {} episodes".format(total_downloaded))
 
 
-def _get_args():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Prints out helpful messages."
-    )
-    parser.add_argument(
-        "-p",
-        "--pretend",
-        action="store_true",
-        help="Only pretend to download, convert, and store files.",
-    )
-    parser.add_argument(
-        "-t",
-        "--threads",
-        type=int,
-        help="Override the config settings with how many threads you want to use",
-    )
-    parser.add_argument(
-        "-d",
-        "--daemon",
-        action="store_true",
-        help="Run the script as a daemon instead of once",
-    )
-    parser.add_argument(
-        "--max-days-back",
-        type=int,
-        default=3,
-        help="How many days back we should check for videos",
-    )
-
-    return parser.parse_args()
+if __name__ == "__main__":
+    __main__()

@@ -3,6 +3,7 @@ from typing import Pattern
 import sys
 import site
 import importlib.util
+import argparse
 
 _config_dir = path.join("config", __package__.replace("_", "-"))
 _config_file = path.join(_config_dir, "config.py")
@@ -61,8 +62,43 @@ class Config:
         self._set_default_values()
         self._get_optional_variables()
         self._check_required_variables()
+        self._parse_args()
 
-    def add_args_settings(self, args):
+    def _parse_args(self):
+        # Get arguments first to get verbosity before we get everything else
+        parser = argparse.ArgumentParser()
+
+        parser.add_argument(
+            "-v", "--verbose", action="store_true", help="Prints out helpful messages."
+        )
+        parser.add_argument(
+            "-p",
+            "--pretend",
+            action="store_true",
+            help="Only pretend to download, convert, and store files.",
+        )
+        parser.add_argument(
+            "-t",
+            "--threads",
+            type=int,
+            help="Override the config settings with how many threads you want to use",
+        )
+        parser.add_argument(
+            "-d",
+            "--daemon",
+            action="store_true",
+            help="Run the script as a daemon instead of once",
+        )
+        parser.add_argument(
+            "--max-days-back",
+            type=int,
+            help="How many days back we should check for videos",
+        )
+
+        _args = parser.parse_args()
+        self._add_args_settings(_args)
+
+    def _add_args_settings(self, args):
         """Set additional configuration from script arguments
 
         Args:
@@ -71,15 +107,18 @@ class Config:
         self.verbose = args.verbose
         self.pretend = args.pretend
         self.daemon = args.daemon
-        self.max_days_back = args.max_days_back
 
-        if args.threads is not None:
+        if args.max_days_back:
+            self.max_days_back = args.max_days_back
+
+        if args.threads:
             self.threads = args.threads
 
     def _set_default_values(self):
         """Set default values for variables"""
         self.threads = 1
         self.speed_up_default = 1
+        self.max_days_back = 3
 
     def _get_optional_variables(self):
         """Get optional values from the config file"""
@@ -90,6 +129,11 @@ class Config:
 
         try:
             self.speed_up_default = _user_config.SPEED_UP_DEFAULT
+        except AttributeError:
+            pass
+
+        try:
+            self.max_days_back = _user_config.MAX_DAYS_BACK
         except AttributeError:
             pass
 

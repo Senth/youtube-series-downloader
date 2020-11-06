@@ -38,7 +38,7 @@ class Channel:
     def create_from_config() -> List[Channel]:
         channels = list()
 
-        for name, info in config.channels:
+        for name, info in config.channels.items():
             channel_id = info["channel_id"]
 
             if "dir" in info:
@@ -103,15 +103,19 @@ class Channel:
         return videos
 
     def _is_new(self, dateString: str) -> bool:
-        date = datetime.strptime(dateString, "%Y-%m-%dT%H:%M:%S%z")
-        diff_time = datetime.now() - date.replace(tzinfo=None)
-
-        if diff_time.days <= config.max_days_back:
-            log_message("Is new by {} days".format(diff_time.days))
+        # If config is set to 0. All episodes are new
+        if config.max_days_back == 0:
             return True
         else:
-            log_message("is old by {} days".format(diff_time.days))
-            return False
+            date = datetime.strptime(dateString, "%Y-%m-%dT%H:%M:%S%z")
+            diff_time = datetime.now() - date.replace(tzinfo=None)
+
+            if diff_time.days <= config.max_days_back:
+                log_message("Is new by {} days".format(diff_time.days))
+                return True
+            else:
+                log_message("is old by {} days".format(diff_time.days))
+                return False
 
     def _matches_excludes(self, title: str) -> bool:
         for filter in self.excludes:

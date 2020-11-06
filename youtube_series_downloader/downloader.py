@@ -1,3 +1,4 @@
+import sys
 from tempfile import gettempdir
 from .db import Db
 from .video import Video
@@ -33,7 +34,7 @@ class Downloader:
         # Download video
         completed_process = True
         if not config.pretend:
-            self._downloaded_file
+            self._tmp_download
 
             completed_process = (
                 run(
@@ -57,20 +58,21 @@ class Downloader:
         if completed_process:
             self._convert()
         else:
-            log_message(
+            print(
                 "Failed to download video {} - {}, from channel {}".format(
                     self._video.title, self._video.id, self._channel.name
-                )
+                ),
+                file=sys.stderr,
             )
 
-        log_message(str(self._get_out_filepath()))
+        log_message("Out filepath: " + str(self._get_out_filepath()))
 
     def _convert(self):
-        self._create_out_dir()
         out_filepath = self._get_out_filepath()
         converted = False
 
         if not config.pretend:
+            self._create_out_dir()
             audio_speed = self._channel.speed
             video_speed = 1.0 / audio_speed
 

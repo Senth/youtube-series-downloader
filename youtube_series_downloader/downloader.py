@@ -4,7 +4,7 @@ from tempfile import gettempdir
 from .db import Db
 from .video import Video
 from .channel import Channel
-from .logger import log_message
+from .logger import debug_message, log_message
 from .config import config
 from subprocess import run
 from shutil import copyfile
@@ -13,9 +13,8 @@ import re
 
 
 class Downloader:
-    _db = Db()
-
-    def __init__(self, channel: Channel, video: Video):
+    def __init__(self, db: Db, channel: Channel, video: Video):
+        self._db = db
         self._video = video
         self._channel = channel
         self._tmp_download = path.join(gettempdir(), self._video.id + ".mkv")
@@ -27,13 +26,14 @@ class Downloader:
         Returns:
             bool: True if it has been downloaded before
         """
-        return Downloader._db.has_downloaded(self._video.id)
+        return self._db.has_downloaded(self._video.id)
 
     def download(self):
         """Download and convert the video"""
 
         # Download video
         completed_process = True
+
         if not config.pretend:
             self._tmp_download
 
@@ -61,13 +61,11 @@ class Downloader:
             self._convert()
         else:
             print(
-                "Failed to download video {} - {}, from channel {}".format(
-                    self._video.title, self._video.id, self._channel.name
-                ),
+                f"Failed to download video {self._video.title} - {self._video.id}, from channel {self._channel.name}",
                 file=sys.stderr,
             )
 
-        log_message("Out filepath: " + str(self._get_out_filepath()))
+        debug_message("Out filepath: " + str(self._get_out_filepath()))
 
     def _convert(self):
         out_filepath = self._get_out_filepath()
@@ -85,13 +83,11 @@ class Downloader:
                         "-i",
                         self._tmp_download,
                         "-metadata",
-                        'title="{}"'.format(self._video.title),
+                        f'title="{self._video.title}"',
                         "-threads",
                         str(config.threads),
                         "-filter_complex",
-                        "[0:v]setpts=({})*PTS[v];[0:a]atempo={}[a]".format(
-                            video_speed, audio_speed
-                        ),
+                        f"[0:v]setpts=({video_speed})*PTS[v];[0:a]atempo={audio_speed}[a]",
                         "-map",
                         "[v]",
                         "-map",
@@ -106,18 +102,16 @@ class Downloader:
             if completed_process:
                 converted = True
                 # Copy the temprory file to series/Minecraft
-                log_message(
-                    "Copying file {} to {}".format(self._video.id, out_filepath)
-                )
+                log_message(f"Copy file to {out_filepath}")
                 copyfile(self._tmp_converted, out_filepath)
 
                 # Delete temporary files original file
-                log_message("{} Deleting temporary files".format(self._video.id))
+                debug_message("Deleting temporary files")
                 remove(self._tmp_converted)
                 remove(self._tmp_download)
 
         if converted or config.pretend:
-            Downloader._db.add_downloaded(self._channel.name, self._video.id)
+            self._db.add_downloaded(self._channel.name, self._video.id)
 
     def _get_verbose_out(self) -> int:
         if config.verbose:
@@ -149,7 +143,7 @@ class Downloader:
         return title
 
     def _get_out_filepath(self) -> str:
-        episode_number = Downloader._db.get_next_episode_number(self._channel.name)
+        episode_number = self._db.get_next_episode_number(self._channel.name)
         out_filename = "{} - s01e{} - {}.mp4".format(
             self._channel.name, episode_number, self._get_filename_safe()
         )

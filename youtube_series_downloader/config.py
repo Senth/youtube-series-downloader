@@ -1,8 +1,9 @@
 from os import path
-from typing import Pattern
+from typing import Any, Pattern
 import sys
 import site
 import importlib.util
+import importlib.machinery
 import argparse
 
 _config_dir = path.join("config", __package__.replace("_", "-"))
@@ -23,9 +24,7 @@ else:
     _user_config_example = path.join(site.getuserbase(), _example_file)
     if not path.exists(_sys_config_example) and not path.exists(_user_config_example):
         print(
-            "Error: no configuration found. It should be here: '"
-            + _user_config_file
-            + "'"
+            f"Error: no configuration found. It should be here: '{_user_config_file}'"
         )
         print("run: locate " + _example_file)
         print("This should help you find the current config location.")
@@ -43,11 +42,13 @@ else:
     print(
         "In the same folder there's an example file 'config.example.py' you can copy to 'config.py'."
     )
-    sys.exit(0)
+    sys.exit(1)
 
-_spec = importlib.util.spec_from_file_location("config", _user_config_file)
-_user_config = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(_user_config)
+# Import config
+_loader = importlib.machinery.SourceFileLoader("config", _user_config_file)
+_spec = importlib.util.spec_from_loader(_loader.name, _loader)
+_user_config: Any = importlib.util.module_from_spec(_spec)
+_loader.exec_module(_user_config)
 
 
 def _print_missing(variable_name):
@@ -162,7 +163,7 @@ class Config:
     def _check_channel_info(self):
         """Check so that the channel info is set correctly"""
         channel_example = "UCcJgOeune0II4a_qi9OMkRA"
-        for name, info in self._channels:
+        for name, info in self.channels:
             # Name is string
             if type(name) is not str:
                 print(

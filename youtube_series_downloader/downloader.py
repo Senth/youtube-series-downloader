@@ -44,8 +44,6 @@ class Downloader:
                         "youtube-dl",
                         "-o",
                         self._tmp_download,
-                        "-f",
-                        "bestvideo[height>=1080,fps=60]+bestaudio",
                         "--merge-output-format",
                         "mkv",
                         "--restrict-filenames",

@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="youtube-series-downloader",
-    version="1.1.6",
+    version="1.1.7",
     url="https://github.com/Senth/youtube-series-downloader",
     license="MIT",
     author="Matteus Magnusson",

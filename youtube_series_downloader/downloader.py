@@ -1,6 +1,7 @@
 import subprocess
 import sys
 from tempfile import gettempdir
+from typing import Union
 from .db import Db
 from .video import Video
 from .channel import Channel
@@ -113,9 +114,9 @@ class Downloader:
         if converted or config.pretend:
             self._db.add_downloaded(self._channel.name, self._video.id)
 
-    def _get_verbose_out(self) -> int:
+    def _get_verbose_out(self) -> Union[int, None]:
         if config.verbose:
-            return subprocess.STDOUT
+            return None
         else:
             return subprocess.DEVNULL
 

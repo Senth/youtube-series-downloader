@@ -49,6 +49,12 @@ def _run_once():
         for channel in channels:
             videos = channel.get_videos()
 
+            if len(videos) == 0:
+                log_message(
+                    f"Skipping {channel.name}, no new matching videos to download",
+                    LogColors.skipped,
+                )
+
             for video in videos:
                 downloader = Downloader(db, channel, video)
 
@@ -57,14 +63,14 @@ def _run_once():
                     total_downloaded += 1
                 else:
                     log_message(
-                        f"Skipping {channel.name}, no new videos to download",
+                        f"Skipping {video.title}, already downloaded",
                         LogColors.skipped,
                     )
     except Exception as e:
         raise e
     finally:
         db.close()
-    log_message("\n\nDownloaded {} episodes".format(total_downloaded), LogColors.added)
+    log_message(f"\n\nDownloaded {total_downloaded} episodes", LogColors.added)
 
 
 if __name__ == "__main__":

@@ -1,8 +1,10 @@
+from argparse import Namespace
 from os import path
-from typing import Pattern
+from typing import Any, Pattern
 import sys
 import site
 import importlib.util
+import importlib.machinery
 import argparse
 
 _config_dir = path.join("config", __package__.replace("_", "-"))
@@ -23,11 +25,9 @@ else:
     _user_config_example = path.join(site.getuserbase(), _example_file)
     if not path.exists(_sys_config_example) and not path.exists(_user_config_example):
         print(
-            "Error: no configuration found. It should be here: '"
-            + _user_config_file
-            + "'"
+            f"Error: no configuration found. It should be here: '{_user_config_file}'"
         )
-        print("run: locate " + _example_file)
+        print(f"run: locate {_example_file}")
         print("This should help you find the current config location.")
         print(
             "Otherwise you can download the config.example.py from https://github.com/Senth/youtube-series-downloader/tree/main/config and place it in the correct location"
@@ -36,28 +36,28 @@ else:
 
     print("This seems like it's the first time you run this program.")
     print(
-        "For this program to work properly you have to configure it by editing '"
-        + _user_config_file
-        + "'."
+        f"For this program to work properly you have to configure it by editing '{_user_config_file}'."
     )
     print(
         "In the same folder there's an example file 'config.example.py' you can copy to 'config.py'."
     )
-    sys.exit(0)
+    sys.exit(1)
 
-_spec = importlib.util.spec_from_file_location("config", _user_config_file)
-_user_config = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(_user_config)
+# Import config
+_loader = importlib.machinery.SourceFileLoader("config", _user_config_file)
+_spec = importlib.util.spec_from_loader(_loader.name, _loader)
+_user_config: Any = importlib.util.module_from_spec(_spec)
+_loader.exec_module(_user_config)
 
 
-def _print_missing(variable_name):
-    print("Missing " + variable_name + " variable in config file: " + _user_config_file)
+def _print_missing(variable_name) -> None:
+    print(f"Missing {variable_name} variable in config file: {_user_config_file}")
     print("Please add it to you config.py again to continue")
     sys.exit(1)
 
 
 class Config:
-    def __init__(self, user_config):
+    def __init__(self, user_config: Any) -> None:
         self._user_config = user_config
         self._set_default_values()
         self._get_optional_variables()
@@ -65,7 +65,7 @@ class Config:
         self._parse_args()
         self.app_name = __package__.replace("_", "-")
 
-    def _parse_args(self):
+    def _parse_args(self) -> None:
         # Get arguments first to get verbosity before we get everything else
         parser = argparse.ArgumentParser()
 
@@ -104,7 +104,7 @@ class Config:
         _args = parser.parse_args()
         self._add_args_settings(_args)
 
-    def _add_args_settings(self, args):
+    def _add_args_settings(self, args: Namespace) -> None:
         """Set additional configuration from script arguments
 
         Args:
@@ -124,13 +124,13 @@ class Config:
         if args.debug:
             self.verbose = True
 
-    def _set_default_values(self):
+    def _set_default_values(self) -> None:
         """Set default values for variables"""
         self.threads = 1
         self.speed_up_default = 1
         self.max_days_back = 3
 
-    def _get_optional_variables(self):
+    def _get_optional_variables(self) -> None:
         """Get optional values from the config file"""
         try:
             self.threads = _user_config.THREADS
@@ -147,7 +147,7 @@ class Config:
         except AttributeError:
             pass
 
-    def _check_required_variables(self):
+    def _check_required_variables(self) -> None:
         """Check that all required variables are set in the user config file"""
         try:
             self.series_dir = _user_config.SERIES_DIR
@@ -159,16 +159,14 @@ class Config:
         except AttributeError:
             _print_missing("CHANNELS")
 
-    def _check_channel_info(self):
+    def _check_channel_info(self) -> None:
         """Check so that the channel info is set correctly"""
         channel_example = "UCcJgOeune0II4a_qi9OMkRA"
-        for name, info in self._channels:
+        for name, info in self.channels:
             # Name is string
             if type(name) is not str:
                 print(
-                    "Channel ({}) name is not a string in config file: {}".format(
-                        name, _user_config_file
-                    )
+                    f"Channel ({name}) name is not a string in config file: {_user_config_file}"
                 )
                 sys.exit(1)
 
@@ -179,28 +177,20 @@ class Config:
                     info["channel_id"]
                 ) != len(channel_example):
                     print(
-                        "Channel ({}), channel_id ({}) does not look like a valid channel id in config file: {}".format(
-                            name, info["channes_id"], _user_config_file
-                        )
+                        f"Channel ({name}), channel_id ({info['channel_id']}) does not look like a valid channel id in config file: {_user_config_file}"
                     )
-                    print(
-                        "Here is an example of a channel id {}".format(channel_example)
-                    )
+                    print(f"Here is an example of a channel id {channel_example}")
                     sys.exit(1)
             else:
                 print(
-                    "Channel ({}) missing channel_id in config file: {}".format(
-                        name, _user_config_file
-                    )
+                    f"Channel ({name}) missing channel_id in config file: {_user_config_file}"
                 )
                 sys.exit(1)
 
             # Dir (optional)
             if "dir" in info and type(info["dir"]) is not str:
                 print(
-                    "Channel ({}) dir ({}) is not a string in config file: {}".format(
-                        name, str(info["dir"], _user_config_file)
-                    )
+                    f"Channel ({name}) dir ({info['dir']}) is not a string in config file: {_user_config_file}"
                 )
                 sys.exit(1)
 
@@ -211,9 +201,7 @@ class Config:
                 and type(info["speed"]) is not float
             ):
                 print(
-                    "Channel ({}) speed ({}) is not a number in config file {}".format(
-                        name, str(info["speed"], _user_config_file)
-                    )
+                    f"Channel ({name}) speed ({info['speed']}) is not a number in config file {_user_config_file}"
                 )
                 sys.exit(1)
 
@@ -222,7 +210,7 @@ class Config:
             Config._check_regex(name, "excludes", info)
 
     @staticmethod
-    def _check_regex(channel_name: str, list_name: str, info: dict):
+    def _check_regex(channel_name: str, list_name: str, info: dict) -> None:
         """Check so include or exclude channel is set correctly
 
         Args:
@@ -237,16 +225,12 @@ class Config:
                 for value in info[list_name]:
                     if not isinstance(value, Pattern):
                         print(
-                            "Channel ({}) has an invalid {} item ({}) that is not a Regex pattern in config file: {}".format(
-                                channel_name, list_name, str(value), _user_config_file
-                            )
+                            f"Channel ({channel_name}) has an invalid {list_name} item ({value}) that is not a Regex pattern in config file: {_user_config_file}"
                         )
                         sys.exit(1)
             else:
                 print(
-                    "Channel ({}), {} is not list in config file: {}".format(
-                        channel_name, list_name, _user_config_file
-                    )
+                    f"Channel ({channel_name}), {list_name} is not a list in config file: {_user_config_file}"
                 )
                 sys.exit(1)
 

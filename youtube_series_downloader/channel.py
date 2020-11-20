@@ -14,7 +14,7 @@ import requests
 class Channel:
     _RSS_PREFIX = "https://www.youtube.com/feeds/videos.xml?channel_id="
     _REGEX = re.compile(
-        "<entry>.*?<yt:videoId>(.*?)<\/yt:videoId>.*?<title>(.*?)<\/title>.*?<published>(.*?)<\/published>.*?<\/entry>",
+        r"<entry>.*?<yt:videoId>(.*?)<\/yt:videoId>.*?<title>(.*?)<\/title>.*?<published>(.*?)<\/published>.*?<\/entry>",
         re.DOTALL,
     )
 

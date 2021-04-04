@@ -7,7 +7,7 @@ Downloads new YouTube episodes from configurable channels and adds them in a [pl
 ## Features
 
 - Download latest episodes from configurable channels. Configurable how many days back to look for an episode.
-- Speed up videos. Both globally configurable and each channel can override the speed.
+- Speed up videos. Configurable both globally and separate for each channel.
 - Run as a daemon.
 - Plex friendly output.
 - Include/exclude regex filters to only download episodes matching the title.
@@ -15,15 +15,29 @@ Downloads new YouTube episodes from configurable channels and adds them in a [pl
 ## Usage
 
 ```
-$ youtube-series-downloader --help
+usage: youtube-series-downloader [-h] [-v] [-p] [-t THREADS] [-d] [--max-days-back MAX_DAYS_BACK] [--debug]
+
+optional arguments:
+  -d, --daemon    Run the script as a daemon instead of once
+  -p, --pretend   Only pretend to download, convert, and store files
+
+  -t THREADS, --threads THREADS
+                  Override the config settings with how many threads you want to use
+  --max-days-back MAX_DAYS_BACK
+                  How many days back we should check for videos
+
+  -h, --help      show this help message and exit
+  -v, --verbose   Prints out helpful messages
+  --debug         Turn on debug messages. This automatically turns on --verbose as well.
 ```
 
 ## Installation
 
-Run the command below and follow the instructions.
+Run the commands below and follow the instructions.
 
 ```
-$ pip install --user youtube-series-downloader && youtube-series-downloader
+$ pip install --user youtube-series-downloader
+$ youtube-series-downloader
 ```
 
 ### Requirements

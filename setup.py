@@ -1,14 +1,12 @@
-from setuptools import find_packages
 from setuptools import setup
 
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-
 setup(
     name="youtube-series-downloader",
-    version="1.1.7",
+    use_scm_version=True,
     url="https://github.com/Senth/youtube-series-downloader",
     license="MIT",
     author="Matteus Magnusson",
@@ -31,5 +29,6 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
     ],
+    setup_requires=["setuptools_scm"],
     python_requires=">=3.8",
 )

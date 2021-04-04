@@ -32,13 +32,13 @@ CHANNELS = {
         # (Optional) If you want to set another speed than SPEED_UP_DEFAULT
         "speed": 2.0,
         
-        # (Optional) Include patterns in regex format
+        # (Optional) Include patterns in regex format. Can be used together with "excludes".
         # If the include pattern is set, only titles that match one of these patterns will be downloaded
         "includes": [
             r"tutorial"  # Example, only download videos that contain the word 'tutorial'
         ],
         
-        # (Optional) Exclude patterns in regex format. Can't be used together with 'include'.
+        # (Optional) Exclude patterns in regex format. Can be used together with "includes".
         # If the exclude pattern is set, titles that match any of the exclude patterns won't be downloaded
         "excludes": [
             r"wordpress"  # Example, download all videos except those that have the title 'wordpress'

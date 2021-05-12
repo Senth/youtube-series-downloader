@@ -1,19 +1,18 @@
-from shutil import which
 from platform import system
+from shutil import which
+from sys import exit
+
+from .logger import Logger
 
 
 def check_for_programs():
     if which("ffmpeg") is None:
-        print(
-            "Could not find ffmpeg progam on your computer which is required to use this script."
-        )
+        Logger.error("Could not find ffmpeg progam on your computer which is required to use this script.")
 
         # Print specific instructions for various OSes
         os = system()
         if os == "Windows" or os == "Darwin":
-            print(
-                "You can download and install the program from here: https://ffmpeg.org/download.html"
-            )
+            print("You can download and install the program from here: https://ffmpeg.org/download.html")
             if os == "Window":
                 print("Remember to add ffmpeg.exe to your PATH variable")
         elif os == "Linux":
@@ -22,6 +21,6 @@ def check_for_programs():
         exit(1)
 
     if which("youtube-dl") is None:
-        print(
-            "youtube-dl doesn't appear to be in your PATH variable. Please add it to your PATH variable."
+        Logger.error(
+            "youtube-dl doesn't appear to be in your PATH variable. Please add it to your PATH variable.", exit=True
         )

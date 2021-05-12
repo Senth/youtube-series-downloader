@@ -54,7 +54,7 @@ def _run_once():
 
             if len(videos) == 0:
                 Logger.info(
-                    f"Skipping {channel.name}, no new matching videos to download",
+                    f"🦘 Skipping {channel.name}, no new matching videos to download",
                     LogColors.skipped,
                 )
 
@@ -66,9 +66,12 @@ def _run_once():
                     total_downloaded += 1
                 else:
                     Logger.verbose(
-                        f"Skipping {video.title}, already downloaded",
+                        f"🟠 Skipping {video.title}, already downloaded",
                         LogColors.skipped,
                     )
+
+            Logger.info("")
+            Logger.verbose("")
     except Exception as e:
         raise e
     finally:

@@ -69,13 +69,14 @@ class Downloader:
     def _convert(self):
         out_filepath = self._get_out_filepath()
         converted = False
+        completed_process = True
 
+        Logger.info(f"🎞 Re-rendering to different speeds")
         if not config.pretend:
             self._create_out_dir()
             audio_speed = self._channel.speed
             video_speed = 1.0 / audio_speed
 
-            Logger.info(f"🎞 Re-rendering to different speeds")
             completed_process = (
                 run(
                     [
@@ -99,18 +100,19 @@ class Downloader:
                 == 0
             )
 
-            if completed_process:
-                converted = True
-                # Copy the temprory file to series/Minecraft
-                Logger.info(f"💾 Saving rendered video ➡ {out_filepath}")
+        if completed_process:
+            converted = True
+            # Copy the temprory file to series/Minecraft
+            Logger.info(f"💾 Saving rendered video ➡ {out_filepath}")
+            if not config.pretend:
                 copyfile(self._tmp_converted, out_filepath)
 
-                # Delete temporary files original file
-                Logger.debug("🗑 Deleting temporary files")
+            # Delete temporary files original file
+            Logger.debug("🗑 Deleting temporary files")
+            if not config.pretend:
                 remove(self._tmp_converted)
                 remove(self._tmp_download)
 
-        if converted or config.pretend:
             self._db.add_downloaded(self._channel.name, self._video.id)
 
     def _get_verbose_out(self) -> Union[int, None]:

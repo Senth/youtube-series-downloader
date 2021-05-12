@@ -1,14 +1,14 @@
 from __future__ import annotations
-from .logger import LogColors, debug_message, log_message
-from .video import Video
-from .config import config
-from typing import (
-    List,
-    Pattern,
-)
-from datetime import datetime
+
 import re
+from datetime import datetime
+from typing import List, Pattern
+
 import requests
+
+from .config import config
+from .logger import LogColors, Logger
+from .video import Video
 
 
 class Channel:
@@ -23,7 +23,7 @@ class Channel:
         name: str,
         channel_id: str,
         collection_dir: str,
-        speed: int,
+        speed: float,
         excludes: List[Pattern],
         includes: List[Pattern],
     ):
@@ -74,9 +74,7 @@ class Channel:
         return channels
 
     def get_videos(self) -> List[Video]:
-        log_message("\n\n**********************************", LogColors.header)
-        log_message(self.name.center(34), LogColors.header)
-        log_message("**********************************", LogColors.header)
+        Logger.info(LogColors.bold + self.name, LogColors.header)
 
         url = Channel._RSS_PREFIX + self.channel_id
         xml = requests.get(url).text
@@ -89,18 +87,14 @@ class Channel:
             id = groups[0]
             title = groups[1]
             date = groups[2]
-            debug_message(f"Checking video {id}, ({title}), date ({date})")
+            Logger.debug(f"🔎 Checking video {id}, ({title}), date ({date})")
 
-            if (
-                self._is_new(date)
-                and self._matches_includes(title)
-                and not self._matches_excludes(title)
-            ):
+            if self._is_new(date) and self._matches_includes(title) and not self._matches_excludes(title):
                 video = Video(id, date, title)
-                log_message(f"+++ {title}\n", LogColors.added)
+                Logger.info(f"➕ {title}\n", LogColors.added)
                 videos.append(video)
             else:
-                debug_message("")
+                Logger.debug("")
 
         return videos
 
@@ -113,19 +107,19 @@ class Channel:
             diff_time = datetime.now() - date.replace(tzinfo=None)
 
             if diff_time.days <= config.max_days_back:
-                debug_message(f"    + New by {diff_time.days} days", LogColors.passed)
+                Logger.verbose(f"🟢 New by {diff_time.days} days", LogColors.passed, indent=1)
                 return True
             else:
-                debug_message(f"    - Old by {diff_time.days} days", LogColors.skipped)
+                Logger.verbose(f"🔴 Old by {diff_time.days} days", LogColors.skipped, indent=1)
                 return False
 
     def _matches_excludes(self, title: str) -> bool:
         for filter in self.excludes:
             if re.search(filter, title):
-                debug_message(f"    - Exclude: {filter}", LogColors.skipped)
+                Logger.verbose(f"🔴 Exclude: {filter}", LogColors.skipped, indent=1)
                 return True
 
-        debug_message("    + No matching excludes", LogColors.passed)
+        Logger.verbose("🟢 No matching excludes", LogColors.passed, indent=1)
         return False
 
     def _matches_includes(self, title: str) -> bool:
@@ -134,8 +128,8 @@ class Channel:
 
         for filter in self.includes:
             if re.search(filter, title):
-                debug_message(f"    + Include: {filter}", LogColors.passed)
+                Logger.verbose(f"🟢 Include: {filter}", LogColors.passed, indent=1)
                 return True
 
-        debug_message("    - No matching includes", LogColors.skipped)
+        Logger.verbose("🔴 No matching includes", LogColors.skipped, indent=1)
         return False

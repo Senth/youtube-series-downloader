@@ -1,16 +1,17 @@
+import re
 import subprocess
 import sys
+from os import makedirs, path, remove
+from shutil import copyfile
+from subprocess import run
 from tempfile import gettempdir
 from typing import Union
-from .db import Db
-from .video import Video
+
 from .channel import Channel
-from .logger import debug_message, log_message
 from .config import config
-from subprocess import run
-from shutil import copyfile
-from os import path, makedirs, remove
-import re
+from .db import Db
+from .logger import Logger
+from .video import Video
 
 
 class Downloader:
@@ -59,12 +60,11 @@ class Downloader:
         if completed_process:
             self._convert()
         else:
-            print(
-                f"Failed to download video {self._video.title} - {self._video.id}, from channel {self._channel.name}",
-                file=sys.stderr,
+            Logger.error(
+                f"Failed to download video {self._video.title} - {self._video.id}, from channel {self._channel.name}"
             )
 
-        debug_message("Out filepath: " + str(self._get_out_filepath()))
+        Logger.debug("Out filepath: " + str(self._get_out_filepath()))
 
     def _convert(self):
         out_filepath = self._get_out_filepath()
@@ -75,6 +75,7 @@ class Downloader:
             audio_speed = self._channel.speed
             video_speed = 1.0 / audio_speed
 
+            Logger.info(f"🎞 Re-rendering to different speeds")
             completed_process = (
                 run(
                     [
@@ -101,11 +102,11 @@ class Downloader:
             if completed_process:
                 converted = True
                 # Copy the temprory file to series/Minecraft
-                log_message(f"Copy file to {out_filepath}")
+                Logger.info(f"💾 Saving rendered video ➡ {out_filepath}")
                 copyfile(self._tmp_converted, out_filepath)
 
                 # Delete temporary files original file
-                debug_message("Deleting temporary files")
+                Logger.debug("🗑 Deleting temporary files")
                 remove(self._tmp_converted)
                 remove(self._tmp_download)
 
@@ -143,9 +144,7 @@ class Downloader:
 
     def _get_out_filepath(self) -> str:
         episode_number = self._db.get_next_episode_number(self._channel.name)
-        out_filename = "{} - s01e{} - {}.mp4".format(
-            self._channel.name, episode_number, self._get_filename_safe()
-        )
+        out_filename = "{} - s01e{} - {}.mp4".format(self._channel.name, episode_number, self._get_filename_safe())
         out_filepath = path.join(self._get_out_dir(), out_filename)
 
         return out_filepath

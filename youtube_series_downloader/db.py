@@ -1,8 +1,9 @@
+import sqlite3
 from os import path
 from pathlib import Path
-import sqlite3
-from .logger import LogColors, debug_message, log_message
+
 from .config import config
+from .logger import LogColors, Logger
 
 
 class Db:
@@ -10,7 +11,7 @@ class Db:
     _FILE = Path(_FILE_PATH)
 
     def __init__(self):
-        debug_message(f"Sqlite DB location: {Db._FILE_PATH}")
+        Logger.debug(f"Sqlite DB location: {Db._FILE_PATH}")
         self._connection = sqlite3.connect(Db._FILE_PATH)
         self._cursor = self._connection.cursor()
 
@@ -18,7 +19,7 @@ class Db:
         self._create_db()
 
     def close(self):
-        debug_message("Closing Sqlite DB connection")
+        Logger.debug("Closing Sqlite DB connection")
         self._connection.commit()
         self._connection.close()
 
@@ -37,8 +38,8 @@ class Db:
         """
         episode_number = self.get_next_episode_number(channel_name)
 
-        debug_message(
-            f"Add to DB downloaded video {video_id} from {channel_name} to downloaded with episode number {episode_number}.",
+        Logger.debug(
+            f"💾 Save to DB {video_id} from {channel_name} with episode number {episode_number}.",
             LogColors.added,
         )
 

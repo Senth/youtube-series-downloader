@@ -74,12 +74,19 @@ class Channel:
         return channels
 
     def get_videos(self) -> List[Video]:
-        Logger.info(LogColors.bold + self.name, LogColors.header)
+        if config.verbose:
+            Logger.verbose("".ljust(40, "*"))
+            Logger.verbose(self.name.center(40), LogColors.header)
+            Logger.verbose("".ljust(40, "*"))
+
+        else:
+            Logger.info(self.name, LogColors.header)
 
         url = Channel._RSS_PREFIX + self.channel_id
         xml = requests.get(url).text
 
         matches = Channel._REGEX.findall(xml)
+        matches.reverse()
 
         videos = []
 
@@ -87,14 +94,12 @@ class Channel:
             id = groups[0]
             title = groups[1]
             date = groups[2]
-            Logger.debug(f"🔎 Checking video {id}, ({title}), date ({date})")
+            Logger.verbose(f"🔎 Checking video {id} {LogColors.bold}{title}{LogColors.no_color} — {date}")
 
             if self._is_new(date) and self._matches_includes(title) and not self._matches_excludes(title):
                 video = Video(id, date, title)
-                Logger.info(f"➕ {title}\n", LogColors.added)
+                Logger.info(f"➕ {title}", LogColors.added)
                 videos.append(video)
-            else:
-                Logger.debug("")
 
         return videos
 

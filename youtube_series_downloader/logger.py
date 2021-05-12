@@ -13,8 +13,8 @@ class LogColors:
     yellow = "\033[33m"
     bold = "\033[1m"
 
-    header = yellow
-    skipped = red
+    header = bold
+    skipped = yellow
     added = green
     warning = orange
     passed = cyan

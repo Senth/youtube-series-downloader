@@ -1,13 +1,16 @@
 from __future__ import annotations
-from datetime import datetime
-from apscheduler.schedulers.blocking import BlockingScheduler
+
 import logging
-from .config import config
-from .program_checker import check_for_programs
-from .logger import LogColors, log_message
-from .downloader import Downloader
+from datetime import datetime
+
+from apscheduler.schedulers.blocking import BlockingScheduler
+
 from .channel import Channel
+from .config import config
 from .db import Db
+from .downloader import Downloader
+from .logger import LogColors, Logger
+from .program_checker import check_for_programs
 
 
 def __main__():
@@ -22,10 +25,10 @@ def __main__():
         logging.getLogger("apscheduler").setLevel(logging.ERROR)
 
     if config.daemon:
-        log_message(f"Starting {config.app_name} as a daemon")
+        Logger.verbose(f"Starting {config.app_name} as a daemon")
         _daemon()
     else:
-        log_message(f"Running {config.app_name} once")
+        Logger.verbose(f"Running {config.app_name} once")
         _run_once()
 
 
@@ -50,7 +53,7 @@ def _run_once():
             videos = channel.get_videos()
 
             if len(videos) == 0:
-                log_message(
+                Logger.info(
                     f"Skipping {channel.name}, no new matching videos to download",
                     LogColors.skipped,
                 )
@@ -62,7 +65,7 @@ def _run_once():
                     downloader.download()
                     total_downloaded += 1
                 else:
-                    log_message(
+                    Logger.verbose(
                         f"Skipping {video.title}, already downloaded",
                         LogColors.skipped,
                     )
@@ -70,7 +73,7 @@ def _run_once():
         raise e
     finally:
         db.close()
-    log_message(f"\n\nDownloaded {total_downloaded} episodes", LogColors.added)
+    Logger.info(f"\n\nDownloaded {total_downloaded} episodes", LogColors.added)
 
 
 if __name__ == "__main__":

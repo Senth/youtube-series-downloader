@@ -18,16 +18,17 @@ Downloads new YouTube episodes from configurable channels and adds them in a [pl
 usage: youtube-series-downloader [-h] [-v] [-p] [-t THREADS] [-d] [--max-days-back MAX_DAYS_BACK] [--debug]
 
 optional arguments:
-  -d, --daemon    Run the script as a daemon instead of once
-  -p, --pretend   Only pretend to download, convert, and store files
+  -d, --daemon    Run the script as a daemon instead of once.
+  -p, --pretend   Only pretend to download, convert, and store files.
 
   -t THREADS, --threads THREADS
-                  How many threads you want to use (overrides config.py)
+                  How many threads you want to use (overrides config.py).
   --max-days-back MAX_DAYS_BACK
-                  How many days back we should check for videos (overrides config.py)
+                  How many days back we should check for videos (overrides config.py).
 
-  -h, --help      show this help message and exit
-  -v, --verbose   Prints out helpful messages
+  -h, --help      show this help message and exit.
+  -v, --verbose   Prints out helpful messages.
+  -s, --silent    Turn off all messages except errors.
   --debug         Turn on debug messages. This automatically turns on --verbose as well.
 ```
 

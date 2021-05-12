@@ -75,7 +75,7 @@ class Config:
             "-t",
             "--threads",
             type=int,
-            help="Override the config settings with how many threads you want to use",
+            help="How many threads you want to use (overrides config.py)",
         )
         parser.add_argument(
             "-d",
@@ -86,7 +86,7 @@ class Config:
         parser.add_argument(
             "--max-days-back",
             type=int,
-            help="How many days back we should check for videos",
+            help="How many days back we should check for videos (overrides config.py)",
         )
         parser.add_argument(
             "--debug",

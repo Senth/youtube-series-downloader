@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- `--silent -s` flag to turn off all messages
+
 ### Changed
 
 - Improve wording in help/readme
+- Improve logging with emojis, colors and indent
+- More logging by default (turn off all by using `--silent`)
 
 ### Removed
 

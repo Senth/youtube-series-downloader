@@ -5,7 +5,7 @@ import site
 import sys
 from argparse import Namespace
 from os import path
-from typing import Any, Pattern
+from typing import Any, Dict, Pattern
 
 _config_dir = path.join("config", __package__.replace("_", "-"))
 _config_file = path.join(_config_dir, "config.py")
@@ -54,7 +54,19 @@ def _print_missing(variable_name) -> None:
 class Config:
     def __init__(self, user_config: Any) -> None:
         self._user_config = user_config
-        self._set_default_values()
+
+        self.threads = 1
+        self.speed_up_default = 1
+        self.max_days_back = 3
+        self.verbose: bool
+        self.debug: bool
+        self.silent: bool
+        self.pretend: bool
+        self.daemon: bool
+        self.threads: int
+        self.max_days_back: int
+        self.speed_up_default: float
+
         self._get_optional_variables()
         self._check_required_variables()
         self._parse_args()
@@ -64,7 +76,6 @@ class Config:
         # Get arguments first to get verbosity before we get everything else
         parser = argparse.ArgumentParser()
 
-        parser.add_argument("-v", "--verbose", action="store_true", help="Prints out helpful messages.")
         parser.add_argument(
             "-p",
             "--pretend",
@@ -75,23 +86,34 @@ class Config:
             "-t",
             "--threads",
             type=int,
-            help="How many threads you want to use (overrides config.py)",
+            help="How many threads you want to use (overrides config.py).",
         )
         parser.add_argument(
             "-d",
             "--daemon",
             action="store_true",
-            help="Run the script as a daemon instead of once",
+            help="Run the script as a daemon instead of once.",
         )
         parser.add_argument(
             "--max-days-back",
             type=int,
-            help="How many days back we should check for videos (overrides config.py)",
+            help="How many days back we should check for videos (overrides config.py).",
+        )
+        parser.add_argument(
+            "-v",
+            "--verbose",
+            action="store_true",
+            help="Prints out helpful messages.",
         )
         parser.add_argument(
             "--debug",
             action="store_true",
             help="Turn on debug messages. This automatically turns on --verbose as well.",
+        )
+        parser.add_argument(
+            "-s" "--silent",
+            action="store_true",
+            help="Turns off all messages except errors.",
         )
 
         _args = parser.parse_args()
@@ -103,6 +125,7 @@ class Config:
         Args:
             args (list): All the parsed arguments
         """
+        self.silent = args.silent
         self.verbose = args.verbose
         self.debug = args.debug
         self.pretend = args.pretend
@@ -116,12 +139,6 @@ class Config:
 
         if args.debug:
             self.verbose = True
-
-    def _set_default_values(self) -> None:
-        """Set default values for variables"""
-        self.threads = 1
-        self.speed_up_default = 1
-        self.max_days_back = 3
 
     def _get_optional_variables(self) -> None:
         """Get optional values from the config file"""

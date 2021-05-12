@@ -1,53 +1,48 @@
+import argparse
+import importlib.machinery
+import importlib.util
+import site
+import sys
 from argparse import Namespace
 from os import path
 from typing import Any, Pattern
-import sys
-import site
-import importlib.util
-import importlib.machinery
-import argparse
 
 _config_dir = path.join("config", __package__.replace("_", "-"))
 _config_file = path.join(_config_dir, "config.py")
 _example_file = path.join(_config_dir, "config.example.py")
 
 # Search for config file in sys path
-_sys_config = path.join(sys.prefix, _config_file)
 _user_config_file = path.join(site.getuserbase(), _config_file)
 _config_file = ""
-if path.exists(_sys_config):
-    _config_file = _sys_config
-elif path.exists(_user_config_file):
+if path.exists(_user_config_file):
     _config_file = _user_config_file
 # User hasn't configured the program yet
 else:
-    _sys_config_example = path.join(sys.prefix, _example_file)
     _user_config_example = path.join(site.getuserbase(), _example_file)
-    if not path.exists(_sys_config_example) and not path.exists(_user_config_example):
-        print(
-            f"Error: no configuration found. It should be here: '{_user_config_file}'"
-        )
+    if not path.exists(_user_config_example):
+        print(f"Error: no example configuration found. It should be here: '{_user_config_file}'")
         print(f"run: locate {_example_file}")
         print("This should help you find the current config location.")
         print(
-            "Otherwise you can download the config.example.py from https://github.com/Senth/youtube-series-downloader/tree/main/config and place it in the correct location"
+            "Otherwise you can download the config.example.py from "
+            + "https://github.com/Senth/youtube-series-downloader/tree/main/config and place it in the correct location"
         )
         sys.exit(1)
 
     print("This seems like it's the first time you run this program.")
-    print(
-        f"For this program to work properly you have to configure it by editing '{_user_config_file}'."
-    )
-    print(
-        "In the same folder there's an example file 'config.example.py' you can copy to 'config.py'."
-    )
+    print(f"For this program to work properly you have to configure it by editing '{_user_config_file}'.")
+    print("In the same folder there's an example file 'config.example.py' you can copy to 'config.py'.")
     sys.exit(1)
 
 # Import config
 _loader = importlib.machinery.SourceFileLoader("config", _user_config_file)
 _spec = importlib.util.spec_from_loader(_loader.name, _loader)
-_user_config: Any = importlib.util.module_from_spec(_spec)
-_loader.exec_module(_user_config)
+if _spec:
+    _user_config: Any = importlib.util.module_from_spec(_spec)
+    _loader.exec_module(_user_config)
+else:
+    print("Could not load spec. This should never happen. If it does please report it.")
+    sys.exit(1)
 
 
 def _print_missing(variable_name) -> None:
@@ -69,9 +64,7 @@ class Config:
         # Get arguments first to get verbosity before we get everything else
         parser = argparse.ArgumentParser()
 
-        parser.add_argument(
-            "-v", "--verbose", action="store_true", help="Prints out helpful messages."
-        )
+        parser.add_argument("-v", "--verbose", action="store_true", help="Prints out helpful messages.")
         parser.add_argument(
             "-p",
             "--pretend",
@@ -165,44 +158,30 @@ class Config:
         for name, info in self.channels:
             # Name is string
             if type(name) is not str:
-                print(
-                    f"Channel ({name}) name is not a string in config file: {_user_config_file}"
-                )
+                print(f"Channel ({name}) name is not a string in config file: {_user_config_file}")
                 sys.exit(1)
 
             # Channel id required
             if "channel_id" in info:
                 # Channel id valid format
-                if type(info["channel_id"]) is not str or len(
-                    info["channel_id"]
-                ) != len(channel_example):
+                if type(info["channel_id"]) is not str or len(info["channel_id"]) != len(channel_example):
                     print(
                         f"Channel ({name}), channel_id ({info['channel_id']}) does not look like a valid channel id in config file: {_user_config_file}"
                     )
                     print(f"Here is an example of a channel id {channel_example}")
                     sys.exit(1)
             else:
-                print(
-                    f"Channel ({name}) missing channel_id in config file: {_user_config_file}"
-                )
+                print(f"Channel ({name}) missing channel_id in config file: {_user_config_file}")
                 sys.exit(1)
 
             # Dir (optional)
             if "dir" in info and type(info["dir"]) is not str:
-                print(
-                    f"Channel ({name}) dir ({info['dir']}) is not a string in config file: {_user_config_file}"
-                )
+                print(f"Channel ({name}) dir ({info['dir']}) is not a string in config file: {_user_config_file}")
                 sys.exit(1)
 
             # Speed (optional)
-            if (
-                "speed" in info
-                and type(info["speed"]) is not int
-                and type(info["speed"]) is not float
-            ):
-                print(
-                    f"Channel ({name}) speed ({info['speed']}) is not a number in config file {_user_config_file}"
-                )
+            if "speed" in info and type(info["speed"]) is not int and type(info["speed"]) is not float:
+                print(f"Channel ({name}) speed ({info['speed']}) is not a number in config file {_user_config_file}")
                 sys.exit(1)
 
             # Include & Exclude (optional)
@@ -229,9 +208,7 @@ class Config:
                         )
                         sys.exit(1)
             else:
-                print(
-                    f"Channel ({channel_name}), {list_name} is not a list in config file: {_user_config_file}"
-                )
+                print(f"Channel ({channel_name}), {list_name} is not a list in config file: {_user_config_file}")
                 sys.exit(1)
 
 

@@ -5,9 +5,19 @@ All notable changes to this project will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Removed
+
+- System wide configuration (user configuration is still available)
+
+### Fixed
+
+- Now downloads oldest episodes first (so they come in the correct order) [#10](https://github.com/Senth/youtube-series-downloader/issues/10)
+
 ## [1.1.8] - 2021-04-04
 
-### Fixes
+### Fixed
 
 - `config.example.py` updated so that you can use include and exclude at the same time
 
@@ -17,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Now downloads the best format.
 
-### Fixes
+### Fixed
 
 - Didn't work for videos that were below 1080p or didn't have 60fps.
 

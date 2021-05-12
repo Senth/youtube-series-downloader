@@ -1,6 +1,5 @@
 from setuptools import setup
 
-
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
@@ -24,7 +23,11 @@ setup(
     data_files=[
         ("config/youtube-series-downloader", ["config/config.example.py"]),
     ],
-    install_requires=["requests", "apscheduler", "youtube-dl"],
+    install_requires=[
+        "requests",
+        "apscheduler",
+        "youtube-dl",
+    ],
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",

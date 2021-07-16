@@ -1,10 +1,13 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+module_name = "youtube_series_downloader"
+project_slug = "youtube-series-downloader"
+
 setup(
-    name="youtube-series-downloader",
+    name=project_slug,
     use_scm_version=True,
     url="https://github.com/Senth/youtube-series-downloader",
     license="MIT",
@@ -13,24 +16,29 @@ setup(
     description="Downloads YouTube series and optionally speeds them up to be watched on TVs",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=["youtube_series_downloader"],
+    packages=find_packages(),
     entry_points={
         "console_scripts": [
-            "youtube-series-downloader=youtube_series_downloader.__main__:__main__",
+            f"{project_slug}={module_name}.__main__:main",
         ],
     },
     include_package_data=True,
     data_files=[
-        ("config/youtube-series-downloader", ["config/config.example.py"]),
+        ("config", [f"config/{project_slug}-example.cfg"]),
     ],
     install_requires=[
-        "requests",
         "apscheduler",
+        "blulib==0.1.0",
+        "requests",
+        "tealprint==0.1.0",
         "youtube-dl",
     ],
     classifiers=[
+        "Development Status :: 4 - Beta",
+        "Environment :: Console",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
     setup_requires=["setuptools_scm"],
     python_requires=">=3.8",

@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import re
 from datetime import datetime
-from typing import List, Pattern
+from typing import List
 
+import colored
 import requests
+from tealprint import TealPrint
 
 from .config import config
-from .logger import LogColors, Logger
+from .log_colors import LogColors
 from .video import Video
 
 
@@ -18,69 +20,16 @@ class Channel:
         re.DOTALL,
     )
 
-    def __init__(
-        self,
-        name: str,
-        channel_id: str,
-        collection_dir: str,
-        speed: float,
-        excludes: List[Pattern],
-        includes: List[Pattern],
-    ):
-        self.name = name
-        self.channel_id = channel_id
-        self.collection_dir = collection_dir
-        self.speed = speed
-        self.excludes = excludes
-        self.includes = includes
-
-    @staticmethod
-    def create_from_config() -> List[Channel]:
-        channels = list()
-
-        for name, info in config.channels.items():
-            channel_id = info["channel_id"]
-
-            if "dir" in info:
-                dir = info["dir"]
-            else:
-                dir = ""
-
-            if "speed" in info:
-                speed = info["speed"]
-            else:
-                speed = config.speed_up_default
-
-            if "includes" in info:
-                includes = info["includes"]
-            else:
-                includes = []
-
-            if "excludes" in info:
-                excludes = info["excludes"]
-            else:
-                excludes = []
-
-            channel = Channel(
-                name=name,
-                channel_id=channel_id,
-                collection_dir=dir,
-                speed=speed,
-                includes=includes,
-                excludes=excludes,
-            )
-            channels.append(channel)
-
-        return channels
+    def __init__(self):
+        self.name: str = ""
+        self.channel_id: str = ""
+        self.collection_dir: str = ""
+        self.speed: float = config.general.speed_up_default
+        self.excludes: List[str] = []
+        self.includes: List[str] = []
 
     def get_videos(self) -> List[Video]:
-        if config.verbose:
-            Logger.verbose("".ljust(40, "*"))
-            Logger.verbose(self.name.center(40), LogColors.header)
-            Logger.verbose("".ljust(40, "*"))
-
-        else:
-            Logger.info(self.name, LogColors.header)
+        TealPrint.info(self.name, color=LogColors.header)
 
         url = Channel._RSS_PREFIX + self.channel_id
         xml = requests.get(url).text
@@ -94,11 +43,13 @@ class Channel:
             id = groups[0]
             title = groups[1]
             date = groups[2]
-            Logger.verbose(f"🔎 Checking video {id} {LogColors.bold}{title}{LogColors.no_color} — {date}")
+            TealPrint.verbose(
+                f"🔎 Checking video {id} {colored.attr('bold')}{title}{colored.attr('reset')} — {date}", indent=1
+            )
 
             if self._is_new(date) and self._matches_includes(title) and not self._matches_excludes(title):
                 video = Video(id, date, title)
-                Logger.info(f"➕ {title}", LogColors.added)
+                TealPrint.info(f"➕ {title}", color=LogColors.added, indent=1)
                 videos.append(video)
 
         return videos
@@ -112,19 +63,19 @@ class Channel:
             diff_time = datetime.now() - date.replace(tzinfo=None)
 
             if diff_time.days <= config.max_days_back:
-                Logger.verbose(f"🟢 New by {diff_time.days} days", LogColors.passed, indent=1)
+                TealPrint.verbose(f"🟢 New by {diff_time.days} days", color=LogColors.passed, indent=2)
                 return True
             else:
-                Logger.verbose(f"🔴 Old by {diff_time.days} days", LogColors.skipped, indent=1)
+                TealPrint.verbose(f"🔴 Old by {diff_time.days} days", color=LogColors.skipped, indent=2)
                 return False
 
     def _matches_excludes(self, title: str) -> bool:
         for filter in self.excludes:
             if re.search(filter, title):
-                Logger.verbose(f"🔴 Exclude: {filter}", LogColors.skipped, indent=1)
+                TealPrint.verbose(f"🔴 Exclude: {filter}", color=LogColors.skipped, indent=2)
                 return True
 
-        Logger.verbose("🟢 No matching excludes", LogColors.passed, indent=1)
+        TealPrint.verbose("🟢 No matching excludes", color=LogColors.passed, indent=2)
         return False
 
     def _matches_includes(self, title: str) -> bool:
@@ -133,8 +84,8 @@ class Channel:
 
         for filter in self.includes:
             if re.search(filter, title):
-                Logger.verbose(f"🟢 Include: {filter}", LogColors.passed, indent=1)
+                TealPrint.verbose(f"🟢 Include: {filter}", color=LogColors.passed, indent=2)
                 return True
 
-        Logger.verbose("🔴 No matching includes", LogColors.skipped, indent=1)
+        TealPrint.verbose("🔴 No matching includes", color=LogColors.skipped, indent=2)
         return False

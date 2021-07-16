@@ -4,31 +4,36 @@ import logging
 from datetime import datetime
 
 from apscheduler.schedulers.blocking import BlockingScheduler
+from tealprint import TealPrint
+from tealprint.tealprint import TealLevel
+
+from youtube_series_downloader import config_gateway
 
 from .channel import Channel
-from .config import config
+from .config import Config, config
+from .config_gateway import ConfigGateway
 from .db import Db
 from .downloader import Downloader
-from .logger import LogColors, Logger
+from .log_colors import LogColors
 from .program_checker import check_for_programs
 
 
-def __main__():
+def main():
     check_for_programs()
 
     # Set logger for apscheduler depending on verbosity
-    if config.debug:
+    if config.level == TealLevel.debug:
         logging.getLogger("apscheduler").setLevel(logging.DEBUG)
-    elif config.verbose:
+    elif config.level == TealLevel.verbose:
         logging.getLogger("apscheduler").setLevel(logging.INFO)
     else:
         logging.getLogger("apscheduler").setLevel(logging.ERROR)
 
     if config.daemon:
-        Logger.verbose(f"Starting {config.app_name} as a daemon")
+        TealPrint.verbose(f"Starting {config.app_name} as a daemon")
         _daemon()
     else:
-        Logger.verbose(f"Running {config.app_name} once")
+        TealPrint.verbose(f"Running {config.app_name} once")
         _run_once()
 
 
@@ -47,15 +52,18 @@ def _daemon():
 def _run_once():
     total_downloaded = 0
     db = Db()
+    config_gateway = ConfigGateway()
+    config_gateway.setGeneral(config.general)
+    channels = config_gateway.getChannels()
     try:
-        channels = Channel.create_from_config()
         for channel in channels:
             videos = channel.get_videos()
 
+            TealPrint.info(channel.name, color=LogColors.header)
+
             if len(videos) == 0:
-                Logger.info(
-                    f"🦘 Skipping {channel.name}, no new matching videos to download",
-                    LogColors.skipped,
+                TealPrint.info(
+                    f"🦘 Skipping {channel.name}, no new matching videos to download", color=LogColors.skipped, indent=1
                 )
 
             for video in videos:
@@ -65,19 +73,17 @@ def _run_once():
                     downloader.download()
                     total_downloaded += 1
                 else:
-                    Logger.verbose(
-                        f"🟠 Skipping {video.title}, already downloaded",
-                        LogColors.skipped,
+                    TealPrint.verbose(
+                        f"🟠 Skipping {video.title}, already downloaded", color=LogColors.skipped, indent=1
                     )
 
-            Logger.info("")
-            Logger.verbose("")
+            TealPrint.info("")
     except Exception as e:
         raise e
     finally:
         db.close()
-    Logger.info(f"\n\nDownloaded {total_downloaded} episodes", LogColors.added)
+    TealPrint.info(f"\n\nDownloaded {total_downloaded} episodes", color=LogColors.added)
 
 
 if __name__ == "__main__":
-    __main__()
+    main()

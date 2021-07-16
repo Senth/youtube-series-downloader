@@ -1,16 +1,18 @@
 import re
 import subprocess
-import sys
 from os import makedirs, path, remove
 from shutil import copyfile
 from subprocess import run
 from tempfile import gettempdir
 from typing import Union
 
+from tealprint import TealPrint
+from tealprint.tealprint import TealLevel
+
 from .channel import Channel
 from .config import config
 from .db import Db
-from .logger import Logger
+from .log_colors import LogColors
 from .video import Video
 
 
@@ -60,18 +62,18 @@ class Downloader:
         if completed_process:
             self._convert()
         else:
-            Logger.error(
-                f"Failed to download video {self._video.title} - {self._video.id}, from channel {self._channel.name}"
+            TealPrint.info(
+                f"Failed to download video {self._video.title} - {self._video.id}, from channel {self._channel.name}",
+                color=LogColors.error,
             )
 
-        Logger.debug("Out filepath: " + str(self._get_out_filepath()))
+        TealPrint.debug("Out filepath: " + str(self._get_out_filepath()))
 
     def _convert(self):
         out_filepath = self._get_out_filepath()
-        converted = False
         completed_process = True
 
-        Logger.info(f"🎞 Re-rendering to different speeds")
+        TealPrint.info(f"🎞 Re-rendering to different speeds", indent=1)
         if not config.pretend:
             self._create_out_dir()
             audio_speed = self._channel.speed
@@ -101,14 +103,13 @@ class Downloader:
             )
 
         if completed_process:
-            converted = True
             # Copy the temprory file to series/Minecraft
-            Logger.info(f"💾 Saving rendered video ➡ {out_filepath}")
+            TealPrint.info(f"💾 Saving rendered video ➡ {out_filepath}", indent=1)
             if not config.pretend:
                 copyfile(self._tmp_converted, out_filepath)
 
             # Delete temporary files original file
-            Logger.debug("🗑 Deleting temporary files")
+            TealPrint.debug("🗑 Deleting temporary files", indent=1)
             if not config.pretend:
                 remove(self._tmp_converted)
                 remove(self._tmp_download)
@@ -116,14 +117,14 @@ class Downloader:
             self._db.add_downloaded(self._channel.name, self._video.id)
 
     def _get_verbose_out(self) -> Union[int, None]:
-        if config.verbose:
+        if config.level.value >= TealLevel.verbose.value:
             return None
         else:
             return subprocess.DEVNULL
 
     def _get_out_dir(self) -> str:
         return path.join(
-            config.series_dir,
+            config.general.series_dir,
             self._channel.collection_dir,
             self._channel.name,
             "Season 01",

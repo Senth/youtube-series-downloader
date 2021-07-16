@@ -2,8 +2,10 @@ import sqlite3
 from os import path
 from pathlib import Path
 
+from tealprint import TealPrint
+
 from .config import config
-from .logger import LogColors, Logger
+from .log_colors import LogColors
 
 
 class Db:
@@ -11,7 +13,7 @@ class Db:
     _FILE = Path(_FILE_PATH)
 
     def __init__(self):
-        Logger.debug(f"Sqlite DB location: {Db._FILE_PATH}")
+        TealPrint.debug(f"Sqlite DB location: {Db._FILE_PATH}")
         self._connection = sqlite3.connect(Db._FILE_PATH)
         self._cursor = self._connection.cursor()
 
@@ -19,7 +21,7 @@ class Db:
         self._create_db()
 
     def close(self):
-        Logger.debug("Closing Sqlite DB connection")
+        TealPrint.debug("Closing Sqlite DB connection")
         self._connection.commit()
         self._connection.close()
 
@@ -38,9 +40,10 @@ class Db:
         """
         episode_number = self.get_next_episode_number(channel_name)
 
-        Logger.debug(
+        TealPrint.debug(
             f"💾 Save to DB {video_id} from {channel_name} with episode number {episode_number}.",
-            LogColors.added,
+            color=LogColors.added,
+            indent=2,
         )
 
         if not config.pretend:

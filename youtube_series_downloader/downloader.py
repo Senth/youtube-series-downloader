@@ -116,12 +116,6 @@ class Downloader:
 
             self._db.add_downloaded(self._channel.name, self._video.id)
 
-    def _get_verbose_out(self) -> Union[int, None]:
-        if config.level.value >= TealLevel.verbose.value:
-            return None
-        else:
-            return subprocess.DEVNULL
-
     def _get_out_dir(self) -> str:
         return path.join(
             config.general.series_dir,

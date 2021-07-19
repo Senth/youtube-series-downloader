@@ -7,9 +7,8 @@ from typing import List
 
 from blulib.config_parser import ConfigParser
 from tealprint import TealPrint
-
-from .channel import Channel
-from .config import General, config
+from youtube_series_downloader.config import General, config
+from youtube_series_downloader.core.channel import Channel
 
 
 class ConfigGateway:

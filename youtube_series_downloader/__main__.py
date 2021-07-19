@@ -7,10 +7,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from tealprint import TealPrint
 from tealprint.tealprint import TealLevel
 
-from youtube_series_downloader import config_gateway
-
-from .channel import Channel
-from .config import Config, config
+from .config import config
 from .config_gateway import ConfigGateway
 from .db import Db
 from .downloader import Downloader

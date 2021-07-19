@@ -1,6 +1,10 @@
 # youtube-series-downloader
 
+[![python](https://img.shields.io/pypi/pyversions/youtube-series-downloader.svg)](https://pypi.python.org/pypi/youtube-series-downloader)
 [![Latest PyPI version](https://img.shields.io/pypi/v/youtube-series-downloader.svg)](https://pypi.python.org/pypi/youtube-series-downloader)
+[![Downloads](https://pepy.tech/badge/youtube-series-downloader)](https://pepy.tech/project/youtube-series-downloader?right_color=orange)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/Senth/youtube-series-downloader.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Senth/youtube-series-downloader/alerts/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Senth/youtube-series-downloader.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Senth/youtube-series-downloader/context:python)
 
 Downloads new YouTube episodes from configurable channels and adds them in a [plex](https://plex.tv/) friendly format.
 
@@ -14,7 +18,7 @@ Downloads new YouTube episodes from configurable channels and adds them in a [pl
 
 ## Usage
 
-```
+```usage
 usage: youtube-series-downloader [-h] [-v] [-p] [-t THREADS] [-d] [--max-days-back MAX_DAYS_BACK] [--debug]
 
 optional arguments:
@@ -36,9 +40,9 @@ optional arguments:
 
 Run the commands below and follow the instructions.
 
-```
-$ pip install --user youtube-series-downloader
-$ youtube-series-downloader
+```properties
+pip install --user --upgrade youtube-series-downloader
+youtube-series-downloader
 ```
 
 ### Requirements

@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Upcoming]
+
+### Breaking Changes
+
+- Configuration is now stored as an cfg-file instead of py, and in your home directory [#16](https://github.com/Senth/youtube-series-downloader/issues/16)
+  - You can convert you old configuration by running `youtube-series-downloader --migrate-config`
+
+### Added
+
+- A few tests [#17](https://github.com/Senth/youtube-series-downloader/issues/17)
+
+### Changed
+
+- Now calls youtube-dl from the python package instead of through CLI [#18](https://github.com/Senth/youtube-series-downloader/issues/18).
+  This means you don't have to have youtube-dl in your `PATH` environment anymore.
+
+### Fixed
+
+- Exclude pattern now actually excludes videos [#15](https://github.com/Senth/youtube-series-downloader/issues/15)
+
 ## [1.2.1] - 2021-04-05
 
 ### Fixed

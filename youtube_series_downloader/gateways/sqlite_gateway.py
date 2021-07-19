@@ -1,35 +1,30 @@
 import sqlite3
-from os import path
 from pathlib import Path
 
 from tealprint import TealPrint
+from youtube_series_downloader.config import config
+from youtube_series_downloader.utils.log_colors import LogColors
 
-from .config import config
-from .log_colors import LogColors
 
-
-class Db:
-    _FILE_PATH = path.expanduser("~/.youtube-series-downloader.db")
-    _FILE = Path(_FILE_PATH)
+class SqliteGateway:
+    __FILE_PATH = Path.home().joinpath(".youtube-series-downloader.db")
 
     def __init__(self):
-        TealPrint.debug(f"Sqlite DB location: {Db._FILE_PATH}")
-        self._connection = sqlite3.connect(Db._FILE_PATH)
-        self._cursor = self._connection.cursor()
+        TealPrint.debug(f"Sqlite DB location: {SqliteGateway.__FILE_PATH}")
+        self.__connection = sqlite3.connect(SqliteGateway.__FILE_PATH)
+        self.__cursor = self.__connection.cursor()
 
         # Create DB (if not exists)
         self._create_db()
 
     def close(self):
         TealPrint.debug("Closing Sqlite DB connection")
-        self._connection.commit()
-        self._connection.close()
+        self.__connection.commit()
+        self.__connection.close()
 
     def _create_db(self):
-        self._connection.execute(
-            "Create TABLE IF NOT EXISTS video (id TEXT, episode_number INTEGER, channel_name TEXT)"
-        )
-        self._connection.commit()
+        self.__cursor.execute("Create TABLE IF NOT EXISTS video (id TEXT, episode_number INTEGER, channel_name TEXT)")
+        self.__connection.commit()
 
     def add_downloaded(self, channel_name: str, video_id: str):
         """Adds a downloaded episode to the DB
@@ -48,8 +43,8 @@ class Db:
 
         if not config.pretend:
             sql = "INSERT INTO video (id, episode_number, channel_name) VALUES(?, ?, ?)"
-            self._connection.execute(sql, (video_id, episode_number, channel_name))
-            self._connection.commit()
+            self.__cursor.execute(sql, (video_id, episode_number, channel_name))
+            self.__connection.commit()
 
     def get_next_episode_number(self, channel_name: str) -> int:
         """Calculate the next episode number from how many episodes we have downloaded
@@ -61,8 +56,8 @@ class Db:
             int: next episode number
         """
         sql_get_latest_episode = "SELECT episode_number FROM video WHERE channel_name=? ORDER BY episode_number DESC"
-        self._cursor.execute(sql_get_latest_episode, [channel_name])
-        row = self._cursor.fetchone()
+        self.__cursor.execute(sql_get_latest_episode, [channel_name])
+        row = self.__cursor.fetchone()
         if row:
             return int(row[0]) + 1
         else:
@@ -78,6 +73,6 @@ class Db:
             bool: True if it has been downloaded, false otherwise
         """
         sql = "SELECT episode_number FROM video WHERE id=?"
-        self._cursor.execute(sql, [video_id])
-        row = self._cursor.fetchone()
+        self.__cursor.execute(sql, [video_id])
+        row = self.__cursor.fetchone()
         return bool(row)

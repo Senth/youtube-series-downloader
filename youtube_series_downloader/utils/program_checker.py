@@ -19,8 +19,3 @@ def check_for_programs():
             TealPrint.info("You can download it using your distributions package manager")
 
         exit(1)
-
-    if which("youtube-dl") is None:
-        TealPrint.warning(
-            "youtube-dl doesn't appear to be in your PATH variable. Please add it to your PATH variable.", exit=True
-        )

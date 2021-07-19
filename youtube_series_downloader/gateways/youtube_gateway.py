@@ -15,7 +15,8 @@ class YoutubeGateway:
         re.DOTALL,
     )
 
-    def get_videos(self, channel: Channel) -> List[Video]:
+    @staticmethod
+    def get_videos(channel: Channel) -> List[Video]:
         TealPrint.info(channel.name, color=LogColors.header)
 
         url = YoutubeGateway.__RSS_PREFX + channel.id

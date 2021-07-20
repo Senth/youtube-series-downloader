@@ -42,9 +42,9 @@ class ConfigGateway:
             general,
             "General",
             "series_dir",
-            "threads",
-            "speed_up_default",
-            "max_days_back",
+            "int:threads",
+            "float:speed_up_default",
+            "int:max_days_back",
         )
         return general
 
@@ -53,11 +53,12 @@ class ConfigGateway:
         for section in self.parser.sections():
             if ConfigGateway.is_channel_section(section):
                 channel = Channel()
+                channel.name = section
                 self.parser.to_object(
                     channel,
                     section,
-                    "channel_id",
-                    "dir",
+                    "id",
+                    "dir->collection_dir",
                     "float:speed",
                     "str_list:includes",
                     "str_list:excludes",

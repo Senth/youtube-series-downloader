@@ -34,16 +34,20 @@ class DownloadNewEpisodes:
                     indent = 2
                 TealPrint.verbose(f"🎞 {video.title}", color=LogColors.header, indent=1)
 
-                # Filter out
-                if self._filter_video(channel, video):
-                    continue
-
                 # Skip downloaded videos
                 if self.repo.has_downloaded(video):
-                    TealPrint.verbose(f"🟠 Skipping {video.title}, already downloaded", indent=indent)
+                    TealPrint.verbose(
+                        f"🟠 Skipping {video.title}, already downloaded", color=LogColors.skipped, indent=indent
+                    )
                     continue
 
-                TealPrint.verbose(f"🔽 Downloading...")
+                # Filter out
+                if self._filter_video(channel, video):
+                    TealPrint.verbose(f"🔴 Video was filtered out", color=LogColors.filtered, indent=indent)
+                    continue
+                TealPrint.verbose(f"🟢 Video passed all filters", color=LogColors.passed, indent=indent)
+
+                TealPrint.verbose(f"🔽 Downloading...", indent=indent)
                 download_path = self.repo.download(video)
 
                 if download_path is None:
@@ -101,52 +105,52 @@ class DownloadNewEpisodes:
         return False
 
     def _is_old(self, video: Video) -> bool:
-        TealPrint.verbose(f"🚦 Is the video old?", color=LogColors.header, indent=2)
+        TealPrint.verbose(f"🚦 Is the video old?", indent=2)
 
         old_date = datetime.now().astimezone() - timedelta(days=config.general.max_days_back)
         video_date = datetime.strptime(video.date, "%Y-%m-%dT%H:%M:%S%z")
 
         if video_date >= old_date:
-            TealPrint.verbose(f"🟢 Video is new", indent=3)
+            TealPrint.verbose(f"🟢 Video is new", color=LogColors.passed, indent=3)
             return False
         else:
-            TealPrint.verbose(f"🔴 Video is old", indent=3)
+            TealPrint.verbose(f"🔴 Video is old", color=LogColors.filtered, indent=3)
             return True
 
     def _matches_any_include(self, channel: Channel, video: Video) -> bool:
         title = video.title.lower()
-        TealPrint.verbose(f"🚦 Check include filter", color=LogColors.header, indent=2)
+        TealPrint.verbose(f"🚦 Check include filter", indent=2)
 
         if len(channel.includes) == 0:
-            TealPrint.verbose(f"🟢 Pass: no include filter", indent=3)
+            TealPrint.verbose(f"🟢 Pass: no include filter", color=LogColors.passed, indent=3)
             return True
 
         for filter in channel.includes:
             filter = filter.lower()
             if re.search(filter, title):
-                TealPrint.verbose(f"🟢 Pass include: {filter}", indent=3)
+                TealPrint.verbose(f"🟢 Pass include: {filter}", color=LogColors.passed, indent=3)
                 return True
             else:
-                TealPrint.verbose(f"🟡 Didn't match filter: {filter}", indent=3)
+                TealPrint.verbose(f"🟡 Didn't match filter: {filter}", color=LogColors.no_match, indent=3)
 
-        TealPrint.verbose(f"🔴 Filtered: didn't match any include filter", indent=3)
+        TealPrint.verbose(f"🔴 Filtered: didn't match any include filter", color=LogColors.filtered, indent=3)
         return False
 
     def _matches_any_exclude(self, channel: Channel, video: Video) -> bool:
         title = video.title.lower()
-        TealPrint.verbose(f"🚦 Check exclude filter", color=LogColors.header, indent=2)
+        TealPrint.verbose(f"🚦 Check exclude filter", indent=2)
 
         if len(channel.excludes) == 0:
-            TealPrint.verbose(f"🟢 Pass: no exclude filter", indent=3)
+            TealPrint.verbose(f"🟢 Pass: no exclude filter", color=LogColors.passed, indent=3)
             return False
 
         for filter in channel.excludes:
             filter = filter.lower()
             if re.search(filter, title):
-                TealPrint.verbose(f"🔴 Matched filter: {filter}", indent=3)
+                TealPrint.verbose(f"🔴 Matched filter: {filter}", color=LogColors.filtered, indent=3)
                 return True
             else:
-                TealPrint.verbose(f"🟡 Didn't match filter: {filter}", indent=3)
+                TealPrint.verbose(f"🟡 Didn't match filter: {filter}", color=LogColors.no_match, indent=3)
 
-        TealPrint.verbose(f"🟢 Didn't match any exclude filter", indent=3)
+        TealPrint.verbose(f"🟢 Didn't match any exclude filter", color=LogColors.passed, indent=3)
         return False

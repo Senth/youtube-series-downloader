@@ -26,9 +26,9 @@ optional arguments:
   -p, --pretend   Only pretend to download, convert, and store files.
 
   -t THREADS, --threads THREADS
-                  How many threads you want to use (overrides config.py).
+                  How many threads you want to use (overrides config file).
   --max-days-back MAX_DAYS_BACK
-                  How many days back we should check for videos (overrides config.py).
+                  How many days back we should check for videos (overrides config file).
 
   -h, --help      show this help message and exit.
   -v, --verbose   Prints out helpful messages.

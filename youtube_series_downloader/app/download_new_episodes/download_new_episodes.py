@@ -1,4 +1,5 @@
 import re
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List
 
@@ -88,6 +89,9 @@ class DownloadNewEpisodes:
     def _filter_video(self, channel: Channel, video: Video) -> bool:
         """Return true if the video should be filtered out"""
 
+        if self._is_old(video):
+            return True
+
         if not self._matches_any_include(channel, video):
             return True
 
@@ -95,6 +99,19 @@ class DownloadNewEpisodes:
             return True
 
         return False
+
+    def _is_old(self, video: Video) -> bool:
+        TealPrint.verbose(f"🚦 Is the video old?", color=LogColors.header, indent=2)
+
+        old_date = datetime.now().astimezone() - timedelta(days=config.general.max_days_back)
+        video_date = datetime.strptime(video.date, "%Y-%m-%dT%H:%M:%S%z")
+
+        if video_date >= old_date:
+            TealPrint.verbose(f"🟢 Video is new", indent=3)
+            return False
+        else:
+            TealPrint.verbose(f"🔴 Video is old", indent=3)
+            return True
 
     def _matches_any_include(self, channel: Channel, video: Video) -> bool:
         title = video.title.lower()

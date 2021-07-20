@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone, tzinfo
 from pathlib import Path
 from typing import List, Literal, Optional, Set, Union
 
@@ -9,6 +10,7 @@ from youtube_series_downloader.app.download_new_episodes.download_new_episodes i
 from youtube_series_downloader.app.download_new_episodes.download_new_episodes_repo import (
     DownloadNewEpisodesRepo,
 )
+from youtube_series_downloader.config import config
 from youtube_series_downloader.core.channel import Channel
 from youtube_series_downloader.core.video import Video
 
@@ -33,8 +35,10 @@ def case_input(
     return (name, includes, excludes, videos, after_filtered, has_downloaded, downloaded_path, rendered)
 
 
-def video(id: str = "id", date: str = "2021-07-07", title: str = "title") -> Video:
-    return Video(id, date, title)
+def video(id: str = "id", days_from_today: int = 0, title: str = "title") -> Video:
+    now = datetime.now().astimezone() - timedelta(days=days_from_today)
+    date_string = now.strftime("%Y-%m-%dT%H:%M:%S%z")
+    return Video(id, date_string, title)
 
 
 @pytest.mark.parametrize(
@@ -175,7 +179,36 @@ def video(id: str = "id", date: str = "2021-07-07", title: str = "title") -> Vid
                 video(title="australia is a large country"),
             ],
         ),
-        # TODO filter by date
+        case_input(
+            name="Regex include",
+            includes=[r"ship e\d{1,2} -"],
+            videos=[
+                video(title="ship e01 - something"),
+                video(title="ship e100 - not included"),
+                video(title="This is a great episod, ship e99 - The greatest"),
+            ],
+            after_filtered=[
+                video(title="ship e01 - something"),
+                video(title="This is a great episod, ship e99 - The greatest"),
+            ],
+        ),
+        case_input(
+            name="filter out by date",
+            # max_days_back = 10, just for testing
+            videos=[
+                video(title="new", days_from_today=0),
+                video(title="old", days_from_today=20),
+                video(title="new", days_from_today=5),
+                video(title="old", days_from_today=10),
+                video(title="old", days_from_today=11),
+                video(title="new", days_from_today=9),
+            ],
+            after_filtered=[
+                video(title="new", days_from_today=0),
+                video(title="new", days_from_today=5),
+                video(title="new", days_from_today=9),
+            ],
+        ),
     ],
 )
 def test_download_new_episodes(
@@ -190,6 +223,8 @@ def test_download_new_episodes(
     repo: DownloadNewEpisodesRepo,
 ):
     print(name)
+
+    config.general.max_days_back = 10
 
     when(repo).get_latest_videos(...).thenReturn(videos)
 

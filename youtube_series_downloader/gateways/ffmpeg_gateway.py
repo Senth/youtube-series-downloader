@@ -32,7 +32,7 @@ class FfmpegGateway:
                         "-metadata",
                         f'title="{video.title}"',
                         "-threads",
-                        str(config.threads),
+                        str(config.general.threads),
                         "-filter_complex",
                         f"[0:v]setpts=({video_speed})*PTS[v];[0:a]atempo={audio_speed}[a]",
                         "-map",

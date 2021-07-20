@@ -16,11 +16,11 @@ class YoutubeDlGateway:
             return out_file
 
         ydl_opts = {
-            "outtmpl": out_file,
+            "outtmpl": str(out_file),
             "merge_output_formats": "mkv",
         }
         with YoutubeDL(ydl_opts) as ydl:
-            return_code = ydl.download(video.id)
+            return_code = ydl.download([video.id])
             if return_code == 0:
                 return out_file
 

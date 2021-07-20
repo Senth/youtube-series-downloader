@@ -5,10 +5,6 @@ from tealprint import TealLevel, TealPrint
 
 class Config:
     def __init__(self) -> None:
-
-        self.threads = 1
-        self.speed_up_default = 1
-        self.max_days_back = 3
         self.general = General()
         self.level: TealLevel = TealLevel.info
         self.pretend: bool = False

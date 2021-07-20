@@ -2,10 +2,8 @@ import re
 from typing import List
 
 import requests
-from tealprint.tealprint import TealPrint
 from youtube_series_downloader.core.channel import Channel
 from youtube_series_downloader.core.video import Video
-from youtube_series_downloader.utils.log_colors import LogColors
 
 
 class YoutubeGateway:

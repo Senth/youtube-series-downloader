@@ -15,7 +15,6 @@ class FfmpegGateway:
         completed_process = True
         tmp_out = Path(gettempdir(), f"{video.id}_render_out.mp4")
 
-        TealPrint.info(f"🎞 Re-rendering to different speeds", indent=1)
         if not config.pretend:
             # Create parent directories
             out_file.parent.mkdir(parents=True, exist_ok=True)
@@ -48,12 +47,11 @@ class FfmpegGateway:
 
         if completed_process:
             # Copy the temprory file to series/Minecraft
-            TealPrint.debug(f"💾 Saving rendered video ➡ {out_file}", indent=1)
             if not config.pretend:
                 copyfile(tmp_out, out_file)
 
-        TealPrint.debug("🗑 Deleting temporary files", indent=1)
-        in_file.unlink()
+        TealPrint.debug("🗑 Deleting temporary files", indent=3)
+        in_file.unlink(missing_ok=True)
         tmp_out.unlink(missing_ok=True)
 
         return completed_process

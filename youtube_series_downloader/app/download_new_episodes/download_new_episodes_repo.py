@@ -11,12 +11,15 @@ class DownloadNewEpisodesRepo:
 
     def has_downloaded(self, video: Video) -> bool:
         raise NotImplementedError()
-    
+
     def set_as_downloaded(self, channel: Channel, video: Video) -> None:
+        raise NotImplementedError()
+
+    def get_next_episode_number(self, channel: Channel) -> int:
         raise NotImplementedError()
 
     def download(self, video: Video) -> Optional[Path]:
         raise NotImplementedError()
 
-    def render(self, video: Video, in: Path, out:Path, speed: float) -> bool:
+    def render(self, video: Video, in_file: Path, out_file: Path, speed: float) -> bool:
         raise NotImplementedError()

@@ -48,7 +48,7 @@ class FfmpegGateway:
 
         if completed_process:
             # Copy the temprory file to series/Minecraft
-            TealPrint.info(f"💾 Saving rendered video ➡ {out_file}", indent=1)
+            TealPrint.debug(f"💾 Saving rendered video ➡ {out_file}", indent=1)
             if not config.pretend:
                 copyfile(tmp_out, out_file)
 

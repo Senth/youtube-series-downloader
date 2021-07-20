@@ -29,7 +29,7 @@ setup(
     install_requires=[
         "apscheduler==3.7.0",
         "blulib==0.1.0",
-        "requests=2.22.0",
+        "requests==2.22.0",
         "tealprint==0.1.0",
         "youtube-dl",
     ],

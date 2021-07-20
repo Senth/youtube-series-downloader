@@ -27,9 +27,9 @@ setup(
         ("config", [f"config/{project_slug}-example.cfg"]),
     ],
     install_requires=[
-        "apscheduler",
+        "apscheduler==3.7.0",
         "blulib==0.1.0",
-        "requests",
+        "requests=2.22.0",
         "tealprint==0.1.0",
         "youtube-dl",
     ],

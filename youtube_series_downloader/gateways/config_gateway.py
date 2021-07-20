@@ -13,11 +13,11 @@ from youtube_series_downloader.core.channel import Channel
 
 class ConfigGateway:
     def __init__(self) -> None:
-        path = Path.home().joinpath(f".{config.app_name}.cfg")
+        self.path = Path.home().joinpath(f".{config.app_name}.cfg")
         self.parser = ConfigParser()
 
-        if not path.exists():
-            TealPrint.info(f"Could not find any configuration file in {path}")
+        if not self.path.exists():
+            TealPrint.info(f"Could not find any configuration file in {self.path}")
             user_input = input("Do you want to copy the example config and edit it (y/n)?")
             if user_input.lower() == "y":
                 self.parser.copy_example_if_conf_not_exists(config.app_name)
@@ -28,14 +28,16 @@ class ConfigGateway:
                     editor = "notepad.exe"
                 elif editor == "":
                     editor = "vim"
-                run([editor, path])
+                run([editor, self.path])
 
             else:
                 exit(0)
 
-        self.parser.read(path)
+    def read(self):
+        self.parser.read(self.path)
 
-    def setGeneral(self, general: General) -> None:
+    def get_general(self) -> General:
+        general = General()
         self.parser.to_object(
             general,
             "General",
@@ -44,11 +46,12 @@ class ConfigGateway:
             "speed_up_default",
             "max_days_back",
         )
+        return general
 
-    def getChannels(self) -> List[Channel]:
+    def get_channels(self) -> List[Channel]:
         channels: List[Channel] = []
         for section in self.parser.sections():
-            if ConfigGateway.isChannelSection(section):
+            if ConfigGateway.is_channel_section(section):
                 channel = Channel()
                 self.parser.to_object(
                     channel,
@@ -63,5 +66,5 @@ class ConfigGateway:
         return channels
 
     @staticmethod
-    def isChannelSection(section: str) -> bool:
+    def is_channel_section(section: str) -> bool:
         return section != "General" and section != "DEFAULT" and section != "vars"

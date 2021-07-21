@@ -1,5 +1,6 @@
 import os
 import platform
+from configparser import ExtendedInterpolation
 from pathlib import Path
 from subprocess import run
 from sys import exit
@@ -14,7 +15,7 @@ from youtube_series_downloader.core.channel import Channel
 class ConfigGateway:
     def __init__(self) -> None:
         self.path = Path.home().joinpath(f".{config.app_name}.cfg")
-        self.parser = ConfigParser()
+        self.parser = ConfigParser(interpolation=ExtendedInterpolation())
 
         if not self.path.exists():
             TealPrint.info(f"Could not find any configuration file in {self.path}")

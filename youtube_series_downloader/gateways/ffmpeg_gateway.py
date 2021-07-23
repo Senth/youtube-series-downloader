@@ -26,6 +26,7 @@ class FfmpegGateway:
                 subprocess.run(
                     [
                         "ffmpeg",
+                        "-y",
                         "-i",
                         in_file,
                         "-metadata",

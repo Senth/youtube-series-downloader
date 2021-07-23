@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- If quitting the application in the middle of a render youtube_dl would get stuck next time
+- If quitting the application in the middle of a render ffmpeg would get stuck next time
   since you had to confirm the replacement of the file
 
 ## [1.3.4] - 2021-07-22

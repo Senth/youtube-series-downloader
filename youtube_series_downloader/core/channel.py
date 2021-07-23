@@ -22,3 +22,24 @@ class Channel:
             self.speed: float = speed
         else:
             self.speed: float = config.general.speed_up_default
+
+    def __members(self):
+        return (
+            self.name,
+            self.id,
+            self.collection_dir,
+            self.speed,
+            self.includes,
+            self.excludes,
+        )
+
+    def __eq__(self, other) -> bool:
+        if type(other) is type(self):
+            return self.__members() == other.__members()
+        return False
+
+    def __hash__(self) -> int:
+        return hash(self.__members())
+
+    def __repr__(self) -> str:
+        return str(self.__members())

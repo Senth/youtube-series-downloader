@@ -22,6 +22,7 @@ config_gateway = ConfigGateway()
 def main():
     check_for_programs()
     config.set_cli_args(get_args())
+    config_gateway.check_config_exists()
     init_logs()
 
     if config.daemon:

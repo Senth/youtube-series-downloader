@@ -92,7 +92,7 @@ from youtube_series_downloader.gateways.config_gateway import ConfigGateway
 )
 def test_get_channels(name: str, config_str: str, expected: List[Channel]) -> None:
     print(name)
-    
+
     config.general = General()
     gateway = ConfigGateway()
     gateway.parser.read_string(config_str)

@@ -3,7 +3,7 @@
 
 ### Testing
 - [ ] Added unit tests
-- [ ] ...Your own tests...
+- [ ] Tested manually
 
 ### Checklist
 - [ ] I have performed a self-review of my code

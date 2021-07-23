@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2021-07-23
+
+### Added
+
+- Multiple channels can now have the same name and use a common episode counter [#25](https://github.com/Senth/youtube-series-downloader/issues/25)
+  - This is useful when a content creator has multiple channels but you want to put them
+    into the same series.
+- Quits application if configuration is missing required settings
+  - `series_dir = /media/series` under `[General]`
+  - `id = youtube_channel_id` under `[Channel Name]`
+
+### Fixed
+
+- If quitting the application in the middle of a render youtube_dl would get stuck next time
+  since you had to confirm the replacement of the file
+
 ## [1.3.4] - 2021-07-22
 
 ### Fixed

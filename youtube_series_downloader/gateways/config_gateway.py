@@ -17,6 +17,7 @@ class ConfigGateway:
         self.path = Path.home().joinpath(f".{config.app_name}.cfg")
         self.parser = ConfigParser(interpolation=ExtendedInterpolation())
 
+    def check_config_exists(self) -> None:
         if not self.path.exists():
             TealPrint.info(f"Could not find any configuration file in {self.path}")
             user_input = input("Do you want to copy the example config and edit it (y/n)?")
@@ -47,6 +48,9 @@ class ConfigGateway:
             "float:speed_up_default",
             "int:max_days_back",
         )
+        if not general.series_dir:
+            TealPrint.warning(f"Missing 'series_dir' in [General] in your configuration. Please add it.", exit=True)
+
         return general
 
     def get_channels(self) -> List[Channel]:
@@ -59,11 +63,18 @@ class ConfigGateway:
                     channel,
                     section,
                     "id",
+                    "name",
                     "dir->collection_dir",
                     "float:speed",
                     "str_list:includes",
                     "str_list:excludes",
                 )
+
+                if not channel.id:
+                    TealPrint.warning(
+                        f"Missing 'id' for channel [{section}] in your configuration. Please add it.", exit=True
+                    )
+
                 channels.append(channel)
         return channels
 

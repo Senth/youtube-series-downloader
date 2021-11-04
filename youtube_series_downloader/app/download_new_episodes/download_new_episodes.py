@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List
 
-from tealprint import TealLevel, TealPrint
+from tealprint import TealPrint
 from youtube_series_downloader.app.download_new_episodes.download_new_episodes_repo import (
     DownloadNewEpisodesRepo,
 )

@@ -59,7 +59,7 @@ class FfmpegGateway:
 
     @staticmethod
     def _get_verbose_out() -> Union[int, None]:
-        if config.level.value < TealLevel.verbose.value:
+        if config.general.log_level.value < TealLevel.verbose.value:
             return None
         else:
             return subprocess.DEVNULL

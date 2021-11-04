@@ -35,9 +35,9 @@ def main():
 
 def init_logs():
     # Set logger for apscheduler depending on verbosity
-    if config.level == TealLevel.debug:
+    if config.general.log_level == TealLevel.debug:
         logging.getLogger("apscheduler").setLevel(logging.DEBUG)
-    elif config.level == TealLevel.verbose:
+    elif config.general.log_level == TealLevel.verbose:
         logging.getLogger("apscheduler").setLevel(logging.INFO)
     else:
         logging.getLogger("apscheduler").setLevel(logging.ERROR)

@@ -1,6 +1,7 @@
 from typing import List
 
 import pytest
+from tealprint import TealLevel
 from youtube_series_downloader.config import General, config
 from youtube_series_downloader.core.channel import Channel
 from youtube_series_downloader.gateways.config_gateway import ConfigGateway
@@ -146,3 +147,42 @@ def test_required_series_dir() -> None:
 
     assert e.type == SystemExit
     assert e.value.code == 1
+
+
+@pytest.mark.parametrize(
+    "level,expected",
+    [
+        ("none", TealLevel.none),
+        ("error", TealLevel.error),
+        ("warning", TealLevel.warning),
+        ("info", TealLevel.info),
+        ("verbose", TealLevel.verbose),
+        ("debug", TealLevel.debug),
+    ],
+)
+def test_valid_log_levels(level: str, expected: TealLevel) -> None:
+    gateway = ConfigGateway()
+    config_str = f"""
+        [General]
+        series_dir = series
+        log_level = {level}
+    """
+
+    gateway.parser.read_string(config_str)
+    general = gateway.get_general()
+
+    assert expected == general.log_level
+
+
+def test_invalid_log_level() -> None:
+    gateway = ConfigGateway()
+    config_str = """
+        [General]
+        series_dir = series
+        log_level = invalid
+    """
+
+    gateway.parser.read_string(config_str)
+    general = gateway.get_general()
+
+    assert TealLevel.info == general.log_level

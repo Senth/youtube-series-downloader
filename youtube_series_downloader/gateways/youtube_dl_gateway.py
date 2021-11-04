@@ -16,9 +16,9 @@ class YoutubeDlGateway:
         if config.pretend:
             return out_file
 
-        quiet = config.level.value >= TealLevel.verbose.value
-        no_warnings = config.level.value >= TealLevel.warning.value
-        verbose = config.level.value >= TealLevel.debug.value
+        quiet = config.general.log_level.value >= TealLevel.verbose.value
+        no_warnings = config.general.log_level.value >= TealLevel.warning.value
+        verbose = config.general.log_level.value >= TealLevel.debug.value
 
         ydl_opts = {
             "outtmpl": str(out_file),

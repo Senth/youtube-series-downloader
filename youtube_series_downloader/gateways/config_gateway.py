@@ -8,6 +8,7 @@ from typing import List
 
 from blulib.config_parser import ConfigParser
 from tealprint import TealPrint
+from tealprint.teallevel import TealLevel
 from youtube_series_downloader.config import General, config
 from youtube_series_downloader.core.channel import Channel
 
@@ -47,9 +48,20 @@ class ConfigGateway:
             "int:threads",
             "float:speed_up_default",
             "int:max_days_back",
+            "log_level",
         )
         if not general.series_dir:
             TealPrint.warning(f"Missing 'series_dir' in [General] in your configuration. Please add it.", exit=True)
+
+        # Convert string to LogLevel
+        if isinstance(general.log_level, str):
+            try:
+                general.log_level = TealLevel[general.log_level]
+            except:
+                TealPrint.warning(
+                    f"Failed to set log_level from config, invalid level: {general.log_level}. Setting log_level to info"
+                )
+                general.log_level = TealLevel.info
 
         return general
 

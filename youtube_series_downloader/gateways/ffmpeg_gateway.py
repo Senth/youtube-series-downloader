@@ -51,7 +51,7 @@ class FfmpegGateway:
             if not config.pretend:
                 copyfile(tmp_out, out_file)
 
-        TealPrint.debug("🗑 Deleting temporary files", indent=3)
+        TealPrint.debug("🗑 Deleting temporary files")
         in_file.unlink(missing_ok=True)
         tmp_out.unlink(missing_ok=True)
 

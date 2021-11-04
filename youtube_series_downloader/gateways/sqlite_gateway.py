@@ -38,7 +38,6 @@ class SqliteGateway:
         TealPrint.debug(
             f"💾 Save to DB {video_id} from {channel_name} with episode number {episode_number}.",
             color=LogColors.added,
-            indent=2,
         )
 
         if not config.pretend:

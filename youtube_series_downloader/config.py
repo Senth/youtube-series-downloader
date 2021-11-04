@@ -1,6 +1,6 @@
 from argparse import Namespace
 
-from tealprint import TealLevel, TealPrint
+from tealprint import TealConfig, TealLevel
 
 
 class Config:
@@ -23,7 +23,7 @@ class Config:
             self.level = TealLevel.verbose
         elif args.silent:
             self.level = TealLevel.warning
-        TealPrint.level = self.level
+        TealConfig.level = self.level
 
         self.pretend = args.pretend
         self.daemon = args.daemon

@@ -57,7 +57,7 @@ class ConfigGateway:
         if isinstance(general.log_level, str):
             try:
                 general.log_level = TealLevel[general.log_level]
-            except:
+            except KeyError:
                 TealPrint.warning(
                     f"Failed to set log_level from config, invalid level: {general.log_level}. Setting log_level to info"
                 )

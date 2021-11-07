@@ -48,11 +48,6 @@ youtube-series-downloader
 ### Requirements
 
 - ffmpeg to be installed and available through the PATH environmental variable.
-- youtube-dl available through the PATH environmental variable.
-
-## Licence
-
-MIT
 
 ## Authors
 

@@ -31,7 +31,7 @@ setup(
         "blulib==0.1.1",
         "requests",
         "tealprint==0.2.1",
-        "youtube-dl",
+        "yt-dlp",
     ],
     classifiers=[
         "Development Status :: 4 - Beta",

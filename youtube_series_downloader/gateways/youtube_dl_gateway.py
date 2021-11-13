@@ -3,9 +3,9 @@ from tempfile import gettempdir
 from typing import Optional
 
 from tealprint.tealprint import TealLevel
-from youtube_dl import YoutubeDL
 from youtube_series_downloader.config import config
 from youtube_series_downloader.core.video import Video
+from yt_dlp import YoutubeDL
 
 
 class YoutubeDlGateway:

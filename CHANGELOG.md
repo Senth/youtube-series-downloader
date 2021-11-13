@@ -5,11 +5,12 @@ All notable changes to this project will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Upcoming]
+## [1.5.1] - 2021-11-13
 
 ### Fixed
 
 - Logging indentation is not reset when an exception is thrown [#33](https://github.com/Senth/youtube-series-downloader/issues/33)
+- Changed from `youtube-dl` to `yt-dlp` to once again download videos in full speed [#32](https://github.com/Senth/youtube-series-downloader/issues/32)
 
 ## [1.5.0] - 2021-11-04
 

@@ -67,6 +67,7 @@ def _run_once():
         download_new_episodes = DownloadNewEpisodes(app_repo)
         download_new_episodes.execute(channels)
     finally:
+        TealPrint.clear_indent()
         app_repo.close()
 
 

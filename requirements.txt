@@ -1,5 +1,5 @@
 tealprint==0.2.1
 blulib==0.1.1
-requests==2.22.0
+requests==2.26.0
 APScheduler==3.8.1
 yt-dlp==2021.11.10.1

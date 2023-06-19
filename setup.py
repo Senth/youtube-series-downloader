@@ -28,7 +28,7 @@ setup(
     ],
     install_requires=[
         "apscheduler",
-        "blulib==0.1.1",
+        "blulib==0.1.2",
         "requests",
         "tealprint==0.2.1",
         "yt-dlp",

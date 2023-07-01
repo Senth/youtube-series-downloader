@@ -30,7 +30,7 @@ setup(
         "apscheduler",
         "blulib==0.1.1",
         "requests",
-        "tealprint==0.2.1",
+        "tealprint==0.3.0",
         "yt-dlp",
     ],
     classifiers=[

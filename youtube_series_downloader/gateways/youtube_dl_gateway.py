@@ -26,6 +26,7 @@ class YoutubeDlGateway:
             "verbose": verbose,
             "no_warnings": no_warnings,
             "merge_output_format": "mkv",
+            "write-thumbnail": True,
         }
         with YoutubeDL(ydl_opts) as ydl:
             return_code = ydl.download([video.id])

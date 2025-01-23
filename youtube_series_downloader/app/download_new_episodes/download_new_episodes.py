@@ -47,7 +47,7 @@ class DownloadNewEpisodes:
                 TealPrint.verbose(f"🔽 Downloading...")
                 download_path = self.repo.download(video)
 
-                if download_path is None:
+                if download_path is None or download_path == Path(""):
                     TealPrint.warning(f"⚠ Couldn't download {video.title}")
                     TealPrint.pop_indent()
                     continue
@@ -55,6 +55,12 @@ class DownloadNewEpisodes:
                 TealPrint.verbose(f"🎞 Starting rendering, this may take a while...")
                 out_path = self._get_out_filepath(channel, video)
                 rendered = self.repo.render(video, download_path, out_path, channel.speed)
+
+                thumbnail_path = download_path.with_suffix(".png")
+                if thumbnail_path.exists():
+                    TealPrint.verbose(f"🖼️ Move thumbnail image")
+                    thumbnail_out_path = out_path.with_suffix(".png")
+                    thumbnail_path.rename(thumbnail_out_path)
 
                 if not rendered:
                     TealPrint.warning(f"⚠ Couldn't render {video.title}")

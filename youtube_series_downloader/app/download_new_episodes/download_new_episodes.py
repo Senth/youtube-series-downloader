@@ -47,7 +47,7 @@ class DownloadNewEpisodes:
                 TealPrint.verbose(f"🔽 Downloading...")
                 download_path = self.repo.download(video)
 
-                if download_path is None:
+                if download_path is None or download_path == Path(""):
                     TealPrint.warning(f"⚠ Couldn't download {video.title}")
                     TealPrint.pop_indent()
                     continue

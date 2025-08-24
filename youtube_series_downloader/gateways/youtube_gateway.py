@@ -9,7 +9,12 @@ from youtube_series_downloader.core.video import Video
 class YoutubeGateway:
     __RSS_PREFX: str = "https://www.youtube.com/feeds/videos.xml?channel_id="
     __REGEX = re.compile(
-        r"<entry>.*?<yt:videoId>(.*?)<\/yt:videoId>.*?<title>(.*?)<\/title>.*?<published>(.*?)<\/published>.*?<\/entry>",
+        r"<entry>.*?"
+        + r"<yt:videoId>(.*?)<\/yt:videoId>.*?"
+        + r"<title>(.*?)<\/title>.*?"
+        + r"<published>(.*?)<\/published>.*?"
+        + r"<media:statistics views=\"(.*?)\"\/>.*?"
+        + r"<\/entry>",
         re.DOTALL,
     )
 
@@ -27,6 +32,12 @@ class YoutubeGateway:
             id = groups[0]
             title = groups[1]
             date = groups[2]
+            views = groups[3]
+
+            # Live videos do not have any views in the RSS feed, skip them
+            if views == "0":
+                continue
+
             video = Video(id, date, title)
             videos.append(video)
 

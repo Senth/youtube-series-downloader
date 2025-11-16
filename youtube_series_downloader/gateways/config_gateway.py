@@ -21,7 +21,9 @@ class ConfigGateway:
     def check_config_exists(self) -> None:
         if not self.path.exists():
             TealPrint.info(f"Could not find any configuration file in {self.path}")
-            user_input = input("Do you want to copy the example config and edit it (y/n)?")
+            user_input = input(
+                "Do you want to copy the example config and edit it (y/n)?"
+            )
             if user_input.lower() == "y":
                 self.parser.copy_example_if_conf_not_exists(config.app_name)
                 editor = ""
@@ -49,9 +51,13 @@ class ConfigGateway:
             "float:speed_up_default",
             "int:max_days_back",
             "log_level",
+            "cookies_file",
         )
         if not general.series_dir:
-            TealPrint.warning(f"Missing 'series_dir' in [General] in your configuration. Please add it.", exit=True)
+            TealPrint.warning(
+                f"Missing 'series_dir' in [General] in your configuration. Please add it.",
+                exit=True,
+            )
 
         # Convert string to LogLevel
         if isinstance(general.log_level, str):
@@ -84,7 +90,8 @@ class ConfigGateway:
 
                 if not channel.id:
                     TealPrint.warning(
-                        f"Missing 'id' for channel [{section}] in your configuration. Please add it.", exit=True
+                        f"Missing 'id' for channel [{section}] in your configuration. Please add it.",
+                        exit=True,
                     )
 
                 channels.append(channel)

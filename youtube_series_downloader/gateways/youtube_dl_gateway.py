@@ -27,6 +27,9 @@ class YoutubeDlGateway:
             "no_warnings": no_warnings,
             "merge_output_format": "mkv",
         }
+        if config.general.cookies_file:
+            ydl_opts["cookies"] = config.general.cookies_file
+
         with YoutubeDL(ydl_opts) as ydl:
             return_code = ydl.download([video.id])
             if return_code == 0:

@@ -21,9 +21,7 @@ class ConfigGateway:
     def check_config_exists(self) -> None:
         if not self.path.exists():
             TealPrint.info(f"Could not find any configuration file in {self.path}")
-            user_input = input(
-                "Do you want to copy the example config and edit it (y/n)?"
-            )
+            user_input = input("Do you want to copy the example config and edit it (y/n)?")
             if user_input.lower() == "y":
                 self.parser.copy_example_if_conf_not_exists(config.app_name)
                 editor = ""

@@ -39,7 +39,11 @@ from youtube_series_downloader.gateways.config_gateway import ConfigGateway
             dir = some/dir
             """,
             [
-                Channel(name="Channel Name", id="UChFur_NwVSbUozOcF_F2kMf", collection_dir="some/dir"),
+                Channel(
+                    name="Channel Name",
+                    id="UChFur_NwVSbUozOcF_F2kMf",
+                    collection_dir="some/dir",
+                ),
             ],
         ),
         (
@@ -63,7 +67,11 @@ from youtube_series_downloader.gateways.config_gateway import ConfigGateway
                 another string
             """,
             [
-                Channel(name="Channel Name", id="UChFur_NwVSbUozOcF_F2kMf", includes=["test", "another string"]),
+                Channel(
+                    name="Channel Name",
+                    id="UChFur_NwVSbUozOcF_F2kMf",
+                    includes=["test", "another string"],
+                ),
             ],
         ),
         (
@@ -76,7 +84,11 @@ from youtube_series_downloader.gateways.config_gateway import ConfigGateway
                 another string
             """,
             [
-                Channel(name="Channel Name", id="UChFur_NwVSbUozOcF_F2kMf", excludes=["test", "another string"]),
+                Channel(
+                    name="Channel Name",
+                    id="UChFur_NwVSbUozOcF_F2kMf",
+                    excludes=["test", "another string"],
+                ),
             ],
         ),
         (

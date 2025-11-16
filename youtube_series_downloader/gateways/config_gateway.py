@@ -49,9 +49,13 @@ class ConfigGateway:
             "float:speed_up_default",
             "int:max_days_back",
             "log_level",
+            "cookies_file",
         )
         if not general.series_dir:
-            TealPrint.warning(f"Missing 'series_dir' in [General] in your configuration. Please add it.", exit=True)
+            TealPrint.warning(
+                f"Missing 'series_dir' in [General] in your configuration. Please add it.",
+                exit=True,
+            )
 
         # Convert string to LogLevel
         if isinstance(general.log_level, str):
@@ -84,7 +88,8 @@ class ConfigGateway:
 
                 if not channel.id:
                     TealPrint.warning(
-                        f"Missing 'id' for channel [{section}] in your configuration. Please add it.", exit=True
+                        f"Missing 'id' for channel [{section}] in your configuration. Please add it.",
+                        exit=True,
                     )
 
                 channels.append(channel)

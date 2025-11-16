@@ -52,6 +52,7 @@ class General:
         self.speed_up_default: float = 1.0
         self.max_days_back: int = 3
         self.log_level = TealLevel.info
+        self.cookies_file: str = ""
 
 
 config = Config()

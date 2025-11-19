@@ -1,3 +1,5 @@
 .vscode
 .pytest_cache
+.direnv
+.venv
 __pycache__

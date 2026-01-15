@@ -1,4 +1,4 @@
-tealprint==0.2.1
+tealprint==0.3.0
 blulib==0.1.1
 requests
 APScheduler

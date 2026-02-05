@@ -3,3 +3,4 @@ blulib==0.1.1
 requests
 APScheduler
 yt-dlp
+yt-dlp-ejs
